@@ -78,7 +78,7 @@ Window {
         ListView {
             Layout.fillHeight: parent
             Layout.fillWidth: parent
-            model: testListModel
+            model: model
 
             delegate: Text {
                 text: model.name
@@ -112,16 +112,18 @@ Window {
 
 
     ListModel {
-        id: testListModel
+        id: model
 
-        ListElement {
-            name: "Folder"
+        function appendItem(name) {
+            model.append({"name": name})
         }
-        ListElement {
-            name: "File1"
-        }
-        ListElement {
-            name: "File2"
+    }
+
+    Component.onCompleted: {
+        var drivers = controller.getDrivers()
+
+        for(let driver in drivers) {
+            model.appendItem(drivers[driver])
         }
     }
 }
