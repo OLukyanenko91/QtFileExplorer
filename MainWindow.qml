@@ -76,13 +76,67 @@ Window {
         }
 
         ListView {
+            readonly property string rSelectedColor: "#cce7fe"
+            readonly property string rHighlightedColor: "#e4f3fe"
+            readonly property string rDefaultColor: "#ffffff"
+
+            function clearSelections() {
+                for (let index = 0; index < count; index++) {
+                    let item = listView.itemAtIndex(index)
+                    item.color = listView.rDefaultColor
+                }
+            }
+
+            function selectItem(index: int) {
+                let item = listView.itemAtIndex(index)
+                item.color = listView.rSelectedColor
+            }
+
+            id: listView
             Layout.fillHeight: parent
             Layout.fillWidth: parent
             model: model
+            focus: true
+            clip: true
+            spacing: 1
 
-            delegate: Text {
-                text: model.name
+            delegate: Rectangle {
+                height: 20
+                width: parent.width
+
+                Text {
+                    text: model.name
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    hoverEnabled: true
+
+                    onClicked: {
+                        listView.currentIndex = index
+                    }
+                    onEntered: {
+                        if (listView.currentIndex != index) {
+                            let item = listView.itemAtIndex(index)
+                            item.color = listView.rHighlightedColor
+                        }
+                    }
+                    onExited: {
+                        if (listView.currentIndex != index) {
+                            let item = listView.itemAtIndex(index)
+                            item.color = listView.rDefaultColor
+                        }
+                    }
+                }
             }
+
+            onCurrentIndexChanged: {
+                clearSelections()
+                selectItem(currentIndex)
+            }
+
+            Component.onCompleted: currentIndex = -1
         }
 
         RowLayout {
@@ -109,7 +163,6 @@ Window {
             }
         }
     }
-
 
     ListModel {
         id: model
