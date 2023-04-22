@@ -99,12 +99,15 @@ Window {
             focus: true
             clip: true
             spacing: 1
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {}
 
             delegate: Rectangle {
                 height: 20
-                width: parent.width
+                width: parent ? parent.width : 0
 
                 Text {
+                    id: fileName
                     text: model.name
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -116,6 +119,10 @@ Window {
                     onClicked: {
                         listView.currentIndex = index
                     }
+                    onDoubleClicked: {
+                        controller.openFile(fileName.text)
+                    }
+
                     onEntered: {
                         if (listView.currentIndex != index) {
                             let item = listView.itemAtIndex(index)
@@ -125,7 +132,9 @@ Window {
                     onExited: {
                         if (listView.currentIndex != index) {
                             let item = listView.itemAtIndex(index)
-                            item.color = listView.rDefaultColor
+                            if (item) {
+                                item.color = listView.rDefaultColor
+                            }
                         }
                     }
                 }
@@ -170,13 +179,28 @@ Window {
         function appendItem(name) {
             model.append({"name": name})
         }
+
+        function appendItems(items) {
+            for(let index in items) {
+                model.appendItem(items[index])
+            }
+        }
     }
 
     Component.onCompleted: {
         var drivers = controller.getDrivers()
 
-        for(let driver in drivers) {
-            model.appendItem(drivers[driver])
+        for(let index in drivers) {
+            model.appendItem(drivers[index])
+        }
+    }
+
+    Connections {
+        target: controller
+
+        function onUpdateUIContents(contents) {
+            model.clear()
+            model.appendItems(contents)
         }
     }
 }

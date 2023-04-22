@@ -12,6 +12,16 @@ class Controller : public QObject
 
 public:
     Q_INVOKABLE QStringList getDrivers() const;
+    Q_INVOKABLE void        openFile(const QString fileName);
+
+public:
+    Controller();
+
+signals:
+    void updateUIContents(const QStringList currentContents);
+
+private slots:
+    void onDirContentsChanged(const QStringList dirContents);
 
 private:
     Explorer mExplorer;

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <QDir>
 #include "Explorer.hpp"
 
 
@@ -16,5 +15,19 @@ QStringList Explorer::GetSystemDrivers() const
     }
 
     return drivers;
+}
+
+void Explorer::Open(const QString fileName)
+{
+    if (mCurrentDir.cd(fileName)) {
+        const auto filters = QDir::Files | QDir::Dirs | QDir::QDir::NoDotAndDotDot;
+        const auto sortFlags = QDir::DirsFirst | QDir::IgnoreCase;
+        const auto dirContents = mCurrentDir.entryList(filters, sortFlags);
+
+        emit ContentsChanged(dirContents);
+    }
+    else {
+        // try to open the file with a default app
+    }
 }
 
