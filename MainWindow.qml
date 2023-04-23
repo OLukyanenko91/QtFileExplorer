@@ -55,10 +55,18 @@ Window {
 
             Button {
                 text: "<"
+
+                onPressed: {
+                    controller.goBack();
+                }
             }
 
             Button {
                 text: ">"
+
+                onPressed: {
+                    controller.goForward();
+                }
             }
 
             Button {
@@ -66,6 +74,7 @@ Window {
             }
 
             TextField {
+                id: curPath
                 Layout.fillWidth: parent
             }
 
@@ -83,13 +92,17 @@ Window {
             function clearSelections() {
                 for (let index = 0; index < count; index++) {
                     let item = listView.itemAtIndex(index)
-                    item.color = listView.rDefaultColor
+                    if (item) {
+                        item.color = listView.rDefaultColor
+                    }
                 }
             }
 
             function selectItem(index: int) {
                 let item = listView.itemAtIndex(index)
-                item.color = listView.rSelectedColor
+                if (item) {
+                    item.color = listView.rSelectedColor
+                }
             }
 
             id: listView
@@ -120,7 +133,12 @@ Window {
                         listView.currentIndex = index
                     }
                     onDoubleClicked: {
-                        controller.openFile(fileName.text)
+                        if (curPath.text) {
+                            controller.openDirectory(curPath.text + '/' + fileName.text)
+                        }
+                        else {
+                            controller.openDirectory(fileName.text)
+                        }
                     }
 
                     onEntered: {
@@ -188,11 +206,7 @@ Window {
     }
 
     Component.onCompleted: {
-        var drivers = controller.getDrivers()
-
-        for(let index in drivers) {
-            model.appendItem(drivers[index])
-        }
+        controller.openDirectory(controller.rootDirectory)
     }
 
     Connections {
@@ -201,6 +215,10 @@ Window {
         function onUpdateUIContents(contents) {
             model.clear()
             model.appendItems(contents)
+        }
+
+        function onUpdateUICurrentDirectory(path) {
+            curPath.text = path
         }
     }
 }

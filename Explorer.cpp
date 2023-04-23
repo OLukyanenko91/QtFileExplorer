@@ -2,8 +2,35 @@
 #include "Explorer.hpp"
 
 
-QStringList Explorer::GetSystemDrivers() const
-{
+void Explorer::Cd(const QString path) {
+    if (QDir(path).exists()) { // Check if it's a folder
+        // Open folder
+        SetCurDir(path);
+        mHistory.Add(mCurDir.path());
+    }
+    else if (QFile::exists(path)) { // Check if it's a file
+        // Open file
+    }
+    else {
+        qWarning() << "Incorrect path: " << path;
+    }
+}
+
+void Explorer::Cd(const ExplorerData::CD_DIRECTION direction) {
+    if (mHistory.IsEmpty()) {
+        qWarning() << "History is empty";
+        return;
+    }
+
+    if (direction == ExplorerData::CD_DIRECTION::BACK) {
+        SetCurDir(mHistory.MoveBack());
+    }
+    else if (direction == ExplorerData::CD_DIRECTION::FORWARD) {
+        SetCurDir(mHistory.MoveForward());
+    }
+}
+
+QStringList Explorer::GetSystemDrivers() const {
     QStringList drivers;
 
     foreach (QFileInfo drive, QDir::drives()) {
@@ -17,17 +44,22 @@ QStringList Explorer::GetSystemDrivers() const
     return drivers;
 }
 
-void Explorer::Open(const QString fileName)
-{
-    if (mCurrentDir.cd(fileName)) {
-        const auto filters = QDir::Files | QDir::Dirs | QDir::QDir::NoDotAndDotDot;
-        const auto sortFlags = QDir::DirsFirst | QDir::IgnoreCase;
-        const auto dirContents = mCurrentDir.entryList(filters, sortFlags);
+QStringList Explorer::GetCurDirContents() {
+    const auto filters = QDir::Files | QDir::Dirs | QDir::QDir::NoDotAndDotDot;
+    const auto sortFlags = QDir::DirsFirst | QDir::IgnoreCase;
 
-        emit ContentsChanged(dirContents);
-    }
-    else {
-        // try to open the file with a default app
-    }
+    return mCurDir.entryList(filters, sortFlags);
 }
 
+void Explorer::SetCurDir(const QString path) {
+    mCurDir.setPath(path);
+
+    if (path == ExplorerData::ROOT_DIRECTORY) {
+        emit CurrentDirChanged(QString());
+        emit ContentsChanged(GetSystemDrivers());
+    }
+    else {
+        emit CurrentDirChanged(mCurDir.path().replace("//", "/"));
+        emit ContentsChanged(GetCurDirContents());
+    }
+}

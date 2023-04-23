@@ -12,6 +12,7 @@ qt_add_executable(appQtFileExplorer
     main.cpp
     Controller.cpp
     Explorer.cpp
+    History.cpp
 )
 
 qt_add_qml_module(appQtFileExplorer

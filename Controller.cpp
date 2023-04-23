@@ -4,20 +4,36 @@
 Controller::Controller()
 {
     connect(&mExplorer, &Explorer::ContentsChanged, this, &Controller::onDirContentsChanged);
+    connect(&mExplorer, &Explorer::CurrentDirChanged, this, &Controller::onCurDirChanged);
 }
 
-QStringList Controller::getDrivers() const
+QString Controller::rootDirectory() const
 {
-    return mExplorer.GetSystemDrivers();
+    return ExplorerData::ROOT_DIRECTORY;
 }
 
-void Controller::openFile(const QString fileName)
+void Controller::openDirectory(const QString path)
 {
-    mExplorer.Open(fileName);
+    mExplorer.Cd(path);
+}
+
+void Controller::goBack()
+{
+    mExplorer.Cd(ExplorerData::CD_DIRECTION::BACK);
+}
+
+void Controller::goForward()
+{
+    mExplorer.Cd(ExplorerData::CD_DIRECTION::FORWARD);
 }
 
 void Controller::onDirContentsChanged(const QStringList dirContents)
 {
     emit updateUIContents(dirContents);
+}
+
+void Controller::onCurDirChanged(const QString path)
+{
+    emit updateUICurrentDirectory(path);
 }
 
