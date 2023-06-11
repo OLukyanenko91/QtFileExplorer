@@ -4,15 +4,18 @@ project(QtFileExplorer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.2 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Quick Widgets)
 
 qt_standard_project_setup()
 
 qt_add_executable(appQtFileExplorer
     main.cpp
     Controller.cpp
-    Explorer.cpp
-    History.cpp
+    Explorer/Explorer.cpp
+    Explorer/ExplorerData.hpp
+    Explorer/File.cpp
+    Explorer/History.cpp
+    Explorer/FileIconProvider.cpp
 )
 
 qt_add_qml_module(appQtFileExplorer
@@ -22,5 +25,5 @@ qt_add_qml_module(appQtFileExplorer
 )
 
 target_link_libraries(appQtFileExplorer
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick Qt6::Widgets
 )

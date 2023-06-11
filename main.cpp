@@ -3,6 +3,8 @@
 #include <QQmlContext>
 #include <QDir>
 #include "Controller.hpp"
+#include "Explorer/File.hpp"
+#include "Explorer/FileIconProvider.hpp"
 
 
 int main(int argc, char *argv[])
@@ -13,6 +15,9 @@ int main(int argc, char *argv[])
 
     Controller controller;
     engine.rootContext()->setContextProperty("controller", &controller);
+    engine.addImageProvider("fileIconProvider", new FileIconProvider);
+
+    qmlRegisterType<File>("CustomData", 0, 1, "FileType");
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
         &app, [url](QObject *obj, const QUrl &objUrl) {

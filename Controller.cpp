@@ -12,7 +12,7 @@ QString Controller::rootDirectory() const
     return ExplorerData::ROOT_DIRECTORY;
 }
 
-void Controller::openDirectory(const QString path)
+void Controller::open(const QString path)
 {
     mExplorer.Cd(path);
 }
@@ -27,7 +27,7 @@ void Controller::goForward()
     mExplorer.Cd(ExplorerData::CD_DIRECTION::FORWARD);
 }
 
-void Controller::onDirContentsChanged(const QStringList dirContents)
+void Controller::onDirContentsChanged(const ExplorerData::FileList dirContents)
 {
     emit updateUIContents(dirContents);
 }

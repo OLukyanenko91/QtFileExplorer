@@ -3,25 +3,17 @@
 
 #include <QObject>
 #include <QDir>
+#include <QIcon>
 #include "History.hpp"
+#include "ExplorerData.hpp"
 
-
-namespace ExplorerData {
-    enum class CD_DIRECTION {
-        BACK,
-        FORWARD,
-        UP
-    };
-
-    static const QString ROOT_DIRECTORY = ".";
-}
 
 class Explorer : public QObject
 {
     Q_OBJECT
 
 signals:
-    void ContentsChanged(const QStringList dirContents);
+    void ContentsChanged(const ExplorerData::FileList dirContents);
     void CurrentDirChanged(const QString path);
 
 public:
@@ -29,9 +21,9 @@ public:
     void Cd(const ExplorerData::CD_DIRECTION direction);
 
 private:
-    QStringList GetSystemDrivers() const;
-    QStringList GetCurDirContents();
-    void        SetCurDir(const QString path);
+    QStringList            GetSystemDrivers() const;
+    ExplorerData::FileList GetCurDirContents();
+    void                   SetCurDir(const QString path);
 
 private:
     QDir    mCurDir;

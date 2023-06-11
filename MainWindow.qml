@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
+import CustomData
 
 
 Window {
@@ -85,9 +86,9 @@ Window {
         }
 
         ListView {
-            readonly property string rSelectedColor: "#cce7fe"
+            readonly property string rSelectedColor:    "#cce7fe"
             readonly property string rHighlightedColor: "#e4f3fe"
-            readonly property string rDefaultColor: "#ffffff"
+            readonly property string rDefaultColor:     "#ffffff"
 
             function clearSelections() {
                 for (let index = 0; index < count; index++) {
@@ -116,44 +117,64 @@ Window {
             ScrollBar.vertical: ScrollBar {}
 
             delegate: Rectangle {
+                id: listViewItemBackground
                 height: 20
                 width: parent ? parent.width : 0
+                color: listView.rDefaultColor
 
-                Text {
-                    id: fileName
-                    text: model.name
-                    anchors.verticalCenter: parent.verticalCenter
+                RowLayout {
+                    // Roles
+                    //   name - file name
+                    //   path - file path
+                    //   type - file type (file, folder, driver)
+
+                    spacing: 5
+                    anchors.fill: parent
+
+                    Image {
+                        asynchronous: true
+                        mipmap: true
+                        Layout.preferredWidth: parent.height
+                        Layout.preferredHeight: parent.height
+                        fillMode: Image.PreserveAspectFit
+                        source: "image://fileIconProvider/" + path
+                    }
+
+                    Text {
+                        id: fileName
+                        text: type === FileType.DRIVER ? "Local Disk (" + name + ")" : name
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
+                        verticalAlignment: Text.AlignVCenter
+                    }
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     hoverEnabled: true
 
-                    onClicked: {
-                        listView.currentIndex = index
-                    }
-                    onDoubleClicked: {
-                        if (curPath.text) {
-                            controller.openDirectory(curPath.text + '/' + fileName.text)
-                        }
-                        else {
-                            controller.openDirectory(fileName.text)
-                        }
-                    }
-
                     onEntered: {
-                        if (listView.currentIndex != index) {
+                        if (listView.currentIndex !== index) {
                             let item = listView.itemAtIndex(index)
                             item.color = listView.rHighlightedColor
                         }
                     }
+
                     onExited: {
-                        if (listView.currentIndex != index) {
+                        if (listView.currentIndex !== index) {
                             let item = listView.itemAtIndex(index)
                             if (item) {
                                 item.color = listView.rDefaultColor
                             }
                         }
+                    }
+
+                    onClicked: {
+                        listView.currentIndex = index
+                    }
+
+                    onDoubleClicked: {
+                        controller.open(path)
                     }
                 }
             }
@@ -192,10 +213,10 @@ Window {
     }
 
     ListModel {
-        id: model
-
-        function appendItem(name) {
-            model.append({"name": name})
+        function appendItem(item) {
+            model.append({"name": item.name,
+                          "path": item.path,
+                          "type": item.type})
         }
 
         function appendItems(items) {
@@ -203,10 +224,12 @@ Window {
                 model.appendItem(items[index])
             }
         }
+
+        id: model
     }
 
     Component.onCompleted: {
-        controller.openDirectory(controller.rootDirectory)
+        controller.open(controller.rootDirectory)
     }
 
     Connections {
@@ -222,3 +245,5 @@ Window {
         }
     }
 }
+
+// TODO: Fix item highlighting

@@ -3,7 +3,8 @@
 
 #include <QObject>
 #include <QStringList>
-#include "Explorer.hpp"
+#include "Explorer/Explorer.hpp"
+#include "Explorer/ExplorerData.hpp"
 
 
 class Controller : public QObject
@@ -11,7 +12,7 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    Q_INVOKABLE void openDirectory(const QString path);
+    Q_INVOKABLE void open(const QString path);
     Q_INVOKABLE void goBack();
     Q_INVOKABLE void goForward();
 
@@ -24,11 +25,11 @@ public:
     QString rootDirectory() const;
 
 signals:
-    void updateUIContents(const QStringList currentContents);
+    void updateUIContents(const ExplorerData::FileList currentContents);
     void updateUICurrentDirectory(const QString path);
 
 private slots:
-    void onDirContentsChanged(const QStringList dirContents);
+    void onDirContentsChanged(const ExplorerData::FileList dirContents);
     void onCurDirChanged(const QString path);
 
 private:

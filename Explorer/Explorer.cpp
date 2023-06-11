@@ -3,12 +3,12 @@
 
 
 void Explorer::Cd(const QString path) {
-    if (QDir(path).exists()) { // Check if it's a folder
+    if (File::GetTypeByPath(path) == File::Type::FOLDER) { // Check if it's a folder
         // Open folder
         SetCurDir(path);
         mHistory.Add(mCurDir.path());
     }
-    else if (QFile::exists(path)) { // Check if it's a file
+    else if (File::GetTypeByPath(path) == File::Type::FILE) { // Check if it's a file
         // Open file
     }
     else {
@@ -44,19 +44,30 @@ QStringList Explorer::GetSystemDrivers() const {
     return drivers;
 }
 
-QStringList Explorer::GetCurDirContents() {
-    const auto filters = QDir::Files | QDir::Dirs | QDir::QDir::NoDotAndDotDot;
-    const auto sortFlags = QDir::DirsFirst | QDir::IgnoreCase;
+ExplorerData::FileList Explorer::GetCurDirContents() {
+    auto filters = QDir::Files | QDir::Dirs | QDir::QDir::NoDotAndDotDot;
+    auto sortFlags = QDir::DirsFirst | QDir::IgnoreCase;
+    auto fileInfoList = mCurDir.entryInfoList(filters, sortFlags);
 
-    return mCurDir.entryList(filters, sortFlags);
+    ExplorerData::FileList fileList;
+    foreach (const auto& fileInfo, fileInfoList) {
+        fileList << fileInfo;
+    }
+
+    return fileList;
 }
 
 void Explorer::SetCurDir(const QString path) {
     mCurDir.setPath(path);
 
     if (path == ExplorerData::ROOT_DIRECTORY) {
+        ExplorerData::FileList systemDrivers;
+        foreach (const auto& systemDriver, GetSystemDrivers()) {
+            systemDrivers << systemDriver;
+        }
+
         emit CurrentDirChanged(QString());
-        emit ContentsChanged(GetSystemDrivers());
+        emit ContentsChanged(systemDrivers);
     }
     else {
         emit CurrentDirChanged(mCurDir.path().replace("//", "/"));
