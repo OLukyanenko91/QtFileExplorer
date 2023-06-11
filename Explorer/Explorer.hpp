@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QDir>
 #include <QIcon>
-#include "History.hpp"
+#include "History/History.hpp"
 #include "ExplorerData.hpp"
 
 

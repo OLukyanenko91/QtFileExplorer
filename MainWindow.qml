@@ -89,6 +89,7 @@ Window {
             readonly property string rSelectedColor:    "#cce7fe"
             readonly property string rHighlightedColor: "#e4f3fe"
             readonly property string rDefaultColor:     "#ffffff"
+            readonly property int    rDefaultIndex:     -1
 
             function clearSelections() {
                 for (let index = 0; index < count; index++) {
@@ -174,6 +175,7 @@ Window {
                     }
 
                     onDoubleClicked: {
+                        listView.currentIndex = listView.rDefaultIndex
                         controller.open(path)
                     }
                 }
@@ -184,7 +186,7 @@ Window {
                 selectItem(currentIndex)
             }
 
-            Component.onCompleted: currentIndex = -1
+            Component.onCompleted: currentIndex = listView.rDefaultIndex
         }
 
         RowLayout {

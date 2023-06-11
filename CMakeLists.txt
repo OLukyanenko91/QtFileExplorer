@@ -13,9 +13,9 @@ qt_add_executable(appQtFileExplorer
     Controller.cpp
     Explorer/Explorer.cpp
     Explorer/ExplorerData.hpp
-    Explorer/File.cpp
-    Explorer/History.cpp
-    Explorer/FileIconProvider.cpp
+    Explorer/History/History.cpp
+    Explorer/File/File.cpp
+    Explorer/File/FileIconProvider.cpp
 )
 
 qt_add_qml_module(appQtFileExplorer

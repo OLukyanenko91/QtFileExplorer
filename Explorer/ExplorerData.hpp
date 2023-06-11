@@ -2,7 +2,7 @@
 #define EXPLORERDATA_HPP
 
 #include <QObject>
-#include "File.hpp"
+#include "File/File.hpp"
 
 
 namespace ExplorerData {

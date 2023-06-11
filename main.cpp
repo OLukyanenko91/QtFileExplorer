@@ -3,8 +3,8 @@
 #include <QQmlContext>
 #include <QDir>
 #include "Controller.hpp"
-#include "Explorer/File.hpp"
-#include "Explorer/FileIconProvider.hpp"
+#include "Explorer/File/File.hpp"
+#include "Explorer/File/FileIconProvider.hpp"
 
 
 int main(int argc, char *argv[])
