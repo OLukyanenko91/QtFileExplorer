@@ -190,11 +190,18 @@ Window {
         }
 
         RowLayout {
+            function updateItemsCount(counts) {
+                itemsCount.text = (counts === 1 ? "1 item" :
+                                                  counts + " items")
+            }
+
+            id: status
             Layout.preferredHeight: 20
             Layout.fillWidth: parent
 
             Label {
-                text: "N items"
+                id: itemsCount
+                text: "0 items"
             }
 
             Rectangle {
@@ -240,6 +247,7 @@ Window {
         function onUpdateUIContents(contents) {
             model.clear()
             model.appendItems(contents)
+            status.updateItemsCount(contents.length)
         }
 
         function onUpdateUICurrentDirectory(path) {
