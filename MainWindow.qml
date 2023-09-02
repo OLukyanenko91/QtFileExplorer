@@ -76,6 +76,8 @@ Window {
                 text: "<"
 
                 onPressed: {
+                    statusBar.clear()
+                    listView.resetSelectedIndex()
                     controller.goBack();
                 }
             }
@@ -84,6 +86,8 @@ Window {
                 text: ">"
 
                 onPressed: {
+                    statusBar.clear()
+                    listView.resetSelectedIndex()
                     controller.goForward();
                 }
             }
@@ -116,6 +120,10 @@ Window {
                         item.color = listView.rDefaultColor
                     }
                 }
+            }
+
+            function resetSelectedIndex() {
+                listView.currentIndex = listView.rDefaultIndex
             }
 
             function selectItem(index: int) {
@@ -190,6 +198,7 @@ Window {
 
                     onClicked: {
                         listView.currentIndex = index
+                        selectedItemsCount.text = "1 item selected"
 
                         let size = controller.getFileSize(path)
                         if (size !== -1) {
@@ -198,7 +207,8 @@ Window {
                     }
 
                     onDoubleClicked: {
-                        listView.currentIndex = listView.rDefaultIndex
+                        listView.resetSelectedIndex()
+                        statusBar.clear()
                         controller.open(path)
                     }
                 }
@@ -213,12 +223,17 @@ Window {
         }
 
         RowLayout {
+            function clear() {
+                selectedItemSize.text = ""
+                selectedItemsCount.text = ""
+            }
+
             function updateItemsCount(counts) {
                 itemsCount.text = (counts === 1 ? "1 item" :
                                                   counts + " items")
             }
 
-            id: status
+            id: statusBar
             Layout.preferredHeight: 20
             Layout.fillWidth: parent
 
@@ -229,13 +244,13 @@ Window {
 
             Rectangle {
                 color: "grey"
-                width: 2
+                width: 1
                 height: 10
                 opacity: 0.5
             }
 
             Label {
-                text: "N item(s) selected"
+                id: selectedItemsCount
             }
 
             Label {
@@ -270,7 +285,7 @@ Window {
         function onUpdateUIContents(contents) {
             model.clear()
             model.appendItems(contents)
-            status.updateItemsCount(contents.length)
+            statusBar.updateItemsCount(contents.length)
         }
 
         function onUpdateUICurrentDirectory(path) {
