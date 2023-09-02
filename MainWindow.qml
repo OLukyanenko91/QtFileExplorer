@@ -6,6 +6,24 @@ import CustomData
 
 
 Window {
+    function convertBytesToString(size) {
+        if (size < 1024) {
+            return size.toString() + " bytes"
+        }
+        else if (size < (1024 * 1024)) {
+            return (size / 1024).toFixed(1).toString() + " KB"
+        }
+        else if (size < (1024 * 1024 * 1024)) {
+            return (size / (1024 * 1024)).toFixed(1).toString() + " MB"
+        }
+        else if (size < (1024 * 1024 * 1024 * 1024)) {
+            return (size / (1024 * 1024 * 1024)).toFixed(1).toString() + " GB"
+        }
+
+        return ""
+    }
+
+    id: root
     width: 850
     height: 400
     visible: true
@@ -172,6 +190,11 @@ Window {
 
                     onClicked: {
                         listView.currentIndex = index
+
+                        let size = controller.getFileSize(path)
+                        if (size !== -1) {
+                            selectedItemSize.text = root.convertBytesToString(size)
+                        }
                     }
 
                     onDoubleClicked: {
@@ -216,7 +239,7 @@ Window {
             }
 
             Label {
-                text: "362 KB"
+                id: selectedItemSize
             }
         }
     }
@@ -255,5 +278,3 @@ Window {
         }
     }
 }
-
-// TODO: Fix item highlighting

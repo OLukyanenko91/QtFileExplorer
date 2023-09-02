@@ -27,6 +27,11 @@ void Controller::goForward()
     mExplorer.Cd(ExplorerData::CD_DIRECTION::FORWARD);
 }
 
+quint64 Controller::getFileSize(const QString path)
+{
+    return File::GetSize(path);
+}
+
 void Controller::onDirContentsChanged(const ExplorerData::FileList dirContents)
 {
     emit updateUIContents(dirContents);

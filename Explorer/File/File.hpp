@@ -24,12 +24,16 @@ public:
     };
     Q_ENUM(Type)
 
-    static Type GetTypeByPath(const QString& path);
+    static qint8 INCORRECT_FILE_SIZE;
 
 public:
+    File();
     File(const QFileInfo& fileInfo);
-    File(const QString& systemDriver);
-    File(){}
+    File(const QString& systemDriver);    
+
+public:
+    static quint64 GetSize(const QString filePath);
+    static Type    GetTypeByPath(const QString& path);
 
 private:
     QString mName;

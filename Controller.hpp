@@ -12,9 +12,10 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    Q_INVOKABLE void open(const QString path);
-    Q_INVOKABLE void goBack();
-    Q_INVOKABLE void goForward();
+    Q_INVOKABLE void    open(const QString path);
+    Q_INVOKABLE void    goBack();
+    Q_INVOKABLE void    goForward();
+    Q_INVOKABLE quint64 getFileSize(const QString path);
 
     Q_PROPERTY(QString rootDirectory READ rootDirectory)
 
