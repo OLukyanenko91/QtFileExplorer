@@ -3,12 +3,14 @@
 
 
 void Explorer::Cd(const QString path) {
-    if (File::GetTypeByPath(path) == File::Type::FOLDER) { // Check if it's a folder
+    // Check if it's a folder
+    if (File::GetTypeByPath(path) == File::Type::FOLDER) {
         // Open folder
         SetCurDir(path);
         mHistory.Add(mCurDir.path());
     }
-    else if (File::GetTypeByPath(path) == File::Type::FILE) { // Check if it's a file
+    // Check if it's a file
+    else if (File::GetTypeByPath(path) == File::Type::FILE) {
         // Open file
     }
     else {

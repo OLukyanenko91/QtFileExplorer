@@ -1,5 +1,4 @@
-#ifndef FILE_HPP
-#define FILE_HPP
+#pragma once
 
 #include <QObject>
 #include <QFileInfo>
@@ -43,5 +42,3 @@ private:
 };
 
 Q_DECLARE_METATYPE(File)
-
-#endif // FILE_HPP

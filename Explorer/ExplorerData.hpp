@@ -1,11 +1,11 @@
-#ifndef EXPLORERDATA_HPP
-#define EXPLORERDATA_HPP
+#pragma once
 
 #include <QObject>
 #include "File/File.hpp"
 
 
-namespace ExplorerData {
+namespace ExplorerData
+{
     enum class CD_DIRECTION {
         BACK,
         FORWARD,
@@ -16,5 +16,3 @@ namespace ExplorerData {
 
     using FileList = QList<File>;
 }
-
-#endif // EXPLORERDATA_HPP
