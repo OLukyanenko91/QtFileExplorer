@@ -1,4 +1,6 @@
 #include <iostream>
+#include <QDesktopServices>
+#include <QUrl>
 #include "Explorer.hpp"
 
 
@@ -12,6 +14,10 @@ void Explorer::Cd(const QString path) {
     // Check if it's a file
     else if (File::GetTypeByPath(path) == File::Type::FILE) {
         // Open file
+        bool result = QDesktopServices::openUrl(QUrl::fromLocalFile(path));
+        if (!result) {
+            qWarning() << "Can't open" << path;
+        }
     }
     else {
         qWarning() << "Incorrect path: " << path;
