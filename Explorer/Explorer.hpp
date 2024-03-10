@@ -1,5 +1,4 @@
-#ifndef EXPLORER_HPP
-#define EXPLORER_HPP
+#pragma once
 
 #include <QObject>
 #include <QDir>
@@ -18,7 +17,7 @@ signals:
 
 public:
     void Cd(const QString path);
-    void Cd(const ExplorerData::CD_DIRECTION direction);
+    void Cd(const ExplorerData::CdDirection direction);
 
 private:
     QStringList            GetSystemDrivers() const;
@@ -29,5 +28,3 @@ private:
     QDir    mCurDir;
     History mHistory;
 };
-
-#endif // EXPLORER_HPP

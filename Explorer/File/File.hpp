@@ -16,10 +16,10 @@ class File
 
 public:
     enum class Type {
-        UNKNOWN,
-        FILE,
-        FOLDER,
-        DRIVER
+        Unknown,
+        File,
+        Folder,
+        Driver
     };
     Q_ENUM(Type)
 
@@ -31,14 +31,17 @@ public:
     File(const QString& systemDriver);    
 
 public:
-    static quint64 GetSize(const QString filePath);
+    static QString GetSize(const QString filePath);
     static Type    GetTypeByPath(const QString& path);
+
+private:
+    static QString ConvertBytesToString(const quint64 bytes);
 
 private:
     QString mName;
     QString mPath;
     quint64 mSize {0};
-    Type    mType {File::Type::UNKNOWN};
+    Type    mType {File::Type::Unknown};
 };
 
 Q_DECLARE_METATYPE(File)

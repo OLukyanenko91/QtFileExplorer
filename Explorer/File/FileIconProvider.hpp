@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <QQuickImageProvider>
 #include <QFileIconProvider>
 #include <QFileInfo>

@@ -1,11 +1,11 @@
-#ifndef HISTORY_HPP
-#define HISTORY_HPP
+#pragma once
 
 #include <QString>
 #include <QStringList>
 
 
-class History {
+class History
+{
     static const int MAX_SIZE         = 10;
     static const int INVALID_POSITION = -1;
 
@@ -22,5 +22,3 @@ private:
     QStringList mDirs;
     int         mCurPosition = INVALID_POSITION;
 };
-
-#endif // HISTORY_HPP

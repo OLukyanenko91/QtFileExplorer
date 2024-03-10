@@ -6,10 +6,10 @@
 
 namespace ExplorerData
 {
-    enum class CD_DIRECTION {
-        BACK,
-        FORWARD,
-        UP
+    enum class CdDirection {
+        Back,
+        Forward,
+        Up
     };
 
     static const QString ROOT_DIRECTORY = ".";
