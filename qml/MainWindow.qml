@@ -17,8 +17,8 @@ Window {
         anchors.fill: parent
         anchors.margins: 10
 
-        // Main buttons
         RowLayout {
+            id: mainButtons
             Layout.preferredHeight: 35
             Layout.fillWidth: parent
 
@@ -89,6 +89,7 @@ Window {
         }
 
         RowLayout {
+            id: extraControls
             Layout.preferredHeight: 35
             Layout.fillWidth: parent
 
@@ -97,8 +98,6 @@ Window {
 
                 onPressed: {
                     statusBar.clear()
-                    listView.resetSelectedIndex()
-                    listView.receiveKeyboardInput()
                     controller.goBack()
                 }
             }
@@ -108,8 +107,6 @@ Window {
 
                 onPressed: {
                     statusBar.clear()
-                    listView.resetSelectedIndex()
-                    listView.receiveKeyboardInput()
                     controller.goForward()
                 }
             }
@@ -134,7 +131,31 @@ Window {
 
         FilesView {
             id: listView
-            mViewModel: model
+            pModel: model
+
+            onPSelectedIndexesListChanged: {
+                if (pSelectedIndexesList.length) {
+                    var selectedFilesList = []
+
+                    pSelectedIndexesList.forEach((selectedIndex) => {
+                        let item = model.get(selectedIndex)
+                        if (item) {
+                            item.selected = true
+                            selectedFilesList.push(item.path)
+                        }
+                    })
+
+                    if (selectedFilesList.length) {
+                        let size = controller.getFilesSize(selectedFilesList)
+                        statusBar.updateSelectedItemsSize(size)
+                        statusBar.updateSelectedItemsCount(selectedFilesList.length)
+                    }
+                }
+                else {
+                    statusBar.updateSelectedItemsSize("")
+                    statusBar.updateSelectedItemsCount(0)
+                }
+            }
         }
 
         RowLayout {
@@ -148,6 +169,15 @@ Window {
             function updateItemsCount(counts) {
                 itemsCount.text = (counts === 1 ? "1 item" :
                                                   counts + " items")
+            }
+
+            function updateSelectedItemsCount(counts) {
+                selectedItemsCount.text = (counts === 1 ? "1 item selected" :
+                                           counts > 1 ? counts + " items selected" : "")
+            }
+
+            function updateSelectedItemsSize(size) {
+                selectedItemSize.text = size
             }
 
             // DATA
@@ -188,10 +218,14 @@ Window {
     }
 
     ListModel {
+        // FUNCTIONS
+
         function appendItem(item) {
-            model.append({"name": item.name,
-                          "path": item.path,
-                          "type": item.type})
+            model.append({"name":        item.name,
+                          "path":        item.path,
+                          "type":        item.type,
+                          "selected":    false,
+                          "highlighted": false})
         }
 
         function appendItems(items) {
@@ -200,13 +234,33 @@ Window {
             }
         }
 
+        function updateItemSelection(index: int,
+                                     selected: Boolean,
+                                     highlighted: Boolean) {
+            var item = model.get(index)
+            if (item) {
+                item.selected = selected
+                item.highlighted = highlighted
+            }
+        }
+
+        function itemSelected(index: int) : Boolean {
+            var item = model.get(index)
+            if (item) {
+                return item.selected
+            }
+        }
+
+        // DATA
+
         id: model
     }
 
     Connections {
-        target: controller
+        // FUNCTIONS
 
         function onContentsChanged(contents) {
+            listView.clearSelections()
             model.clear()
             model.appendItems(contents)
             statusBar.updateItemsCount(contents.length)
@@ -223,6 +277,10 @@ Window {
         function onBackgroundTaskFinished(taskId) {
             progressView.hide()
         }
+
+        // DATA
+
+        target: controller
     }
 
     Component.onCompleted: {

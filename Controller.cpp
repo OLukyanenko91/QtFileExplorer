@@ -13,22 +13,22 @@ Controller::Controller()
     connect(&mTasksManager, &TasksManager::TaskFinished, this, &Controller::backgroundTaskFinished);
 }
 
-qint64 Controller::copyFiles(QList<QString> files,
-                             QString destPath)
+qint64 Controller::copyFiles(const QList<QString>& files,
+                             const QString destPath)
 {
     return runNewTask(new CopyFilesTask(Task::GenerateId(),
                                         files,
                                         destPath));
 }
 
-qint64 Controller::deleteFiles(QList<QString> files)
+qint64 Controller::deleteFiles(const QList<QString>& files)
 {
     return runNewTask(new DeleteFilesTask(Task::GenerateId(),
                                           files));
 }
 
-qint64 Controller::moveFiles(QList<QString> files,
-                             QString destPath)
+qint64 Controller::moveFiles(const QList<QString>& files,
+                             const QString destPath)
 {
     return runNewTask(new MoveFilesTask(Task::GenerateId(),
                                         files,
@@ -50,9 +50,9 @@ void Controller::goForward()
     mExplorer.Cd(ExplorerData::CdDirection::Forward);
 }
 
-QString Controller::getFileSize(const QString path)
+QString Controller::getFilesSize(const QList<QString>& paths)
 {
-    return File::GetSize(path);
+    return File::GetSize(paths);
 }
 
 void Controller::pauseBackgroundTask(const qint64 taskId)

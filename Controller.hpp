@@ -12,16 +12,16 @@ class Controller : public QObject
     Q_OBJECT
 
 public:
-    Q_INVOKABLE qint64 copyFiles(QList<QString> files,
-                                 QString destPath);
-    Q_INVOKABLE qint64 deleteFiles(QList<QString> files);
-    Q_INVOKABLE qint64 moveFiles(QList<QString> files,
-                                 QString destPath);
+    Q_INVOKABLE qint64 copyFiles(const QList<QString>& files,
+                                 const QString destPath);
+    Q_INVOKABLE qint64 deleteFiles(const QList<QString>& files);
+    Q_INVOKABLE qint64 moveFiles(const QList<QString>& files,
+                                 const QString destPath);
 
     Q_INVOKABLE void    open(const QString path);
     Q_INVOKABLE void    goBack();
     Q_INVOKABLE void    goForward();
-    Q_INVOKABLE QString getFileSize(const QString path);
+    Q_INVOKABLE QString getFilesSize(const QList<QString>& paths);
 
     Q_INVOKABLE void pauseBackgroundTask(const qint64 taskId);
     Q_INVOKABLE void resumeBackgroundTask(const qint64 taskId);

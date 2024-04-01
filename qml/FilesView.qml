@@ -6,42 +6,67 @@ import CustomData
 
 
 ListView {
+    // PROPERTIES
+
     readonly property string rSelectedColor:    "#cce7fe"
     readonly property string rHighlightedColor: "#e4f3fe"
     readonly property string rDefaultColor:     "#ffffff"
     readonly property int    rDefaultIndex:     -1
 
-    property var mViewModel: ({})
+    property var pSelectedIndexesList: []
+    property var pModel:               ({})
+
+    // FUNCTIONS
 
     function clearSelections() {
         for (let index = 0; index < count; index++) {
-            let item = root.itemAtIndex(index)
-            if (item) {
-                item.color = root.rDefaultColor
+            pModel.updateItemSelection(index, false, false)
+
+            let viewItem = root.itemAtIndex(index)
+            if (viewItem) {
+                viewItem.updateColor()
             }
         }
-    }
 
-    function resetSelectedIndex() {
-        root.currentIndex = root.rDefaultIndex
-    }
-
-    function receiveKeyboardInput() {
-        root.focus = true
+        pSelectedIndexesList = []
     }
 
     function selectItem(index: int) {
+        pModel.updateItemSelection(index, true, false)
 
-        let item = root.itemAtIndex(index)
-        if (item) {
-            item.color = root.rSelectedColor
+        let viewItem = root.itemAtIndex(index)
+        if (viewItem) {
+            viewItem.updateColor()
         }
     }
+
+    function unselectItem(index: int) {
+        pModel.updateItemSelection(index, false, true)
+
+        let viewItem = root.itemAtIndex(index)
+        if (viewItem) {
+            viewItem.updateColor()
+        }
+    }
+
+    function updateSelectedIndexesList() {
+        var selectedIndexes = []
+
+        for (let index = 0; index < count; index++) {
+            if (pModel.itemSelected(index)) {
+                selectedIndexes.push(index)
+            }
+        }
+
+        pSelectedIndexesList = selectedIndexes
+    }
+
+    // DATA
 
     id: root
     Layout.fillHeight: parent
     Layout.fillWidth: parent
-    model: mViewModel
+    model: pModel
     focus: true
     clip: true
     spacing: 1
@@ -49,16 +74,26 @@ ListView {
     ScrollBar.vertical: ScrollBar {}
 
     delegate: Rectangle {
-        id: listViewItemBackground
+         // FUNCTIONS
+
+        function updateColor() {
+            viewDelegate.color = selected ? root.rSelectedColor :
+                                 highlighted ? root.rHighlightedColor : root.rDefaultColor
+        }
+
+        // DATA
+
+        id: viewDelegate
         height: 25
         width: parent ? parent.width : 0
-        color: root.rDefaultColor
 
         RowLayout {
             // Roles
-            //   name - file name
-            //   path - file path
-            //   type - file type (file, folder, driver)
+            //   name        - file name
+            //   path        - file path
+            //   type        - file type (file, folder, driver)
+            //   selected    - is selected (true/false)
+            //   highlighted - is focused (true/false)
 
             spacing: 5
             anchors.fill: parent
@@ -88,37 +123,43 @@ ListView {
             enabled: root.enabled
 
             onEntered: {
-                if (root.currentIndex !== index) {
-                    let item = root.itemAtIndex(index)
-                    item.color = root.rHighlightedColor
+                if (!pModel.itemSelected(index)) {
+                    pModel.updateItemSelection(index, false, true)
+                    updateColor()
                 }
             }
 
             onExited: {
-                if (root.currentIndex !== index) {
-                    let item = root.itemAtIndex(index)
-                    if (item) {
-                        item.color = root.rDefaultColor
-                    }
+                if (!pModel.itemSelected(index)) {
+                    pModel.updateItemSelection(index, false, false)
+                    updateColor()
                 }
             }
 
-            onClicked: {
-                root.currentIndex = index
-                selectedItemsCount.text = "1 item selected"
-
-                let size = controller.getFileSize(path)
-                if (size.length) {
-                    selectedItemSize.text = size
+            onClicked: (mouse)=> {
+                if (mouse.modifiers & Qt.ControlModifier) {
+                    if (pModel.itemSelected(index)) {
+                        unselectItem(index)
+                    }
+                    else {
+                        selectItem(index)
+                    }
                 }
+                else {
+                    clearSelections()
+                    selectItem(index)
+                }
+
+                updateSelectedIndexesList()
             }
 
             onDoubleClicked: {
-                root.resetSelectedIndex()
                 statusBar.clear()
                 controller.open(path)
             }
         }
+
+        Component.onCompleted: updateColor()
     }
 
     onCurrentIndexChanged: {
@@ -127,10 +168,10 @@ ListView {
     }
 
     Keys.onPressed: (event)=> {
-        console.log("key pressed")
-        if (event.key === Qt.Key_Left) {
-            console.log("move left");
-        }
+//        console.log("key pressed")
+//        if (event.key === Qt.Key_Left) {
+//            console.log("move left");
+//        }
 
         event.accepted = true;
     }

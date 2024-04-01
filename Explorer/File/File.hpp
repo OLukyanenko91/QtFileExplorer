@@ -31,7 +31,7 @@ public:
     File(const QString& systemDriver);    
 
 public:
-    static QString GetSize(const QString filePath);
+    static QString GetSize(const QList<QString>& filesPaths);
     static Type    GetTypeByPath(const QString& path);
 
 private:
