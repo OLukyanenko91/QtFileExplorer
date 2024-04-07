@@ -5,7 +5,8 @@ import QtQuick.Controls
 Button {
     // PROPERTIES
 
-    property string pText: ""
+    property string pText:    ""
+    property bool   pEnabled: false
 
     // DATA
 
@@ -13,4 +14,5 @@ Button {
     text: pText
     font.pointSize: 8
     font.bold: true
+    enabled: pEnabled
 }

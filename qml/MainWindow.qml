@@ -6,6 +6,13 @@ import CustomData
 
 
 Window {
+    // PROPERTIES
+
+    property bool pCuttingActive: false
+    property bool pCopyingActive: false
+
+    // DATA
+
     id: root
     width: 850
     height: 400
@@ -26,15 +33,18 @@ Window {
                 id: newFolderButton
                 Layout.fillWidth: parent
                 pText: "New folder"
+                pEnabled: true
             }
 
             CButton {
                 id: cutButton
                 Layout.fillWidth: parent
                 pText: "Cut"
+                pEnabled: listView.pSelectedIndexesList.length >= 1
 
                 onClicked: {
-                    console.log("Cut file(s)")
+                    pasteButton.pEnabled = true
+                    root.pCuttingActive = true
                 }
             }
 
@@ -42,36 +52,45 @@ Window {
                 id: copyButton
                 Layout.fillWidth: parent
                 pText: "Copy"
+                pEnabled: listView.pSelectedIndexesList.length >= 1
 
                 onClicked: {
-                    console.log("Copy file(s)")
+                    pasteButton.pEnabled = true
+                    root.pCopyingActive = true
                 }
             }
 
             CButton {
                 id: pasteButton
                 Layout.fillWidth: parent
-                text: "Paste"
+                pText: "Paste"
 
                 onClicked: {
-                    var taskId = controller.copyFiles(["test1", "test2", "test3"],
-                                                       "test")
+                    pEnabled = root.pCuttingActive ? false : true
 
-                    progressView.pTaskId = taskId
-                    progressView.show()
+                    root.pCopyingActive = false
+                    root.pCuttingActive = false
+
+//                    var taskId = controller.copyFiles(["test1", "test2", "test3"],
+//                                                       "test")
+
+//                    progressView.pTaskId = taskId
+//                    progressView.show()
                 }
             }
 
             CButton {
                 id: renameButton
                 Layout.fillWidth: parent
-                text: "Rename"
+                pText: "Rename"
+                pEnabled: listView.pSelectedIndexesList.length === 1
             }
 
             CButton {
                 id: deleteButton
                 Layout.fillWidth: parent
-                text: "Delete"
+                pText: "Delete"
+                pEnabled: listView.pSelectedIndexesList.length >= 1
 
                 onClicked: {
                     var taskId = controller.deleteFiles(["test1", "test2", "test3"])
@@ -84,7 +103,8 @@ Window {
             CButton {
                 id: propertiesButton
                 Layout.fillWidth: parent
-                text: "Properties"
+                pText: "Properties"
+                pEnabled: listView.pSelectedIndexesList.length === 1
             }
         }
 
@@ -95,6 +115,7 @@ Window {
 
             CButton {
                 pText: "<"
+                pEnabled: true
 
                 onPressed: {
                     statusBar.clear()
@@ -104,6 +125,7 @@ Window {
 
             CButton {
                 text: ">"
+                pEnabled: true
 
                 onPressed: {
                     statusBar.clear()
@@ -113,6 +135,7 @@ Window {
 
             CButton {
                 text: "^"
+                pEnabled: true
             }
 
             TextField {
