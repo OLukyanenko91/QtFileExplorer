@@ -18,12 +18,41 @@ Item {
 
     // FUNCTIONS
 
-    function show() {
-        visible = true
+    function showCopyingProgress(itemsCount: int,
+                                 fromPath: String,
+                                 toPath: String) {
+        info.reset("Copying",
+                    itemsCount,
+                    fromPath,
+                    toPath)
+
+        root.visible = true
+    }
+
+    function showDeletingProgress(itemsCount: int,
+                                  fromPath: String) {
+        info.reset("Deleting",
+                    itemsCount,
+                    fromPath,
+                    "")
+
+        root.visible = true
+    }
+
+    function showMovingProgress(itemsCount: int,
+                                fromPath: String,
+                                toPath: String) {
+        info.reset("Moving",
+                    itemsCount,
+                    fromPath,
+                    toPath)
+
+        root.visible = true
     }
 
     function hide() {
-        visible = false
+        root.visible = false
+        pCurrentProgress = 0
     }
 
     // DATA
@@ -49,16 +78,47 @@ Item {
             anchors.margins: 15
 
             RowLayout {
-                Text { text: "Copying" }
-                Text { text: "1"}
+                // FUNCTIONS
+
+                function reset(operationType: String,
+                                itemsCount: String,
+                                fromPath: String,
+                                toPath: String) {
+                    operationTypeInfo.text = operationType
+                    countInfo.text = itemsCount
+                    fromInfo.text = fromPath
+                    toInfo.text = toPath
+
+                    to.visible = (toPath ? true : false)
+                    controlButton.enabled = true
+                    cancelButton.enabled = true
+                    progress.indeterminate = false
+                }
+
+                function clear() {
+                    operationTypeInfo.text = ""
+                    countInfo.text = ""
+                    fromInfo.text = ""
+                    toInfo.text = ""
+                }
+
+                // DATA
+
+                id: info
+
+                Text { id: operationTypeInfo }
+                Text { id: countInfo }
                 Text { text: "item from" }
                 Text {
-                    text: "Test1"
+                    id: fromInfo
                     color: "blue"
                 }
-                Text { text: "to"}
                 Text {
-                    text: "Test2"
+                    id: to
+                    text: "to"
+                }
+                Text {
+                    id: toInfo
                     color: "blue"
                 }
             }

@@ -15,11 +15,22 @@ DeleteFilesTask::DeleteFilesTask(const qint64 id,
 void DeleteFilesTask::run()
 {
     qInfo() << QThread::currentThreadId() << " DeleteFilesTask::run...";
-    emit Progress(5);
-    QThread::sleep(2);
-    emit Progress(65);
-    QThread::sleep(2);
-    emit Progress(100);
+
+    for (int i = 1; i <= 100; ++i) {
+        if (mCanceled) {
+            qInfo() << QThread::currentThreadId() << " DeleteFilesTask::run...canceled";
+            emit Finished();
+            return;
+        }
+        if (mPaused) {
+            qInfo() << QThread::currentThreadId() << " DeleteFilesTask::run...paused";
+            mWaitCondition.wait(&mWaitMutex);
+        }
+
+        emit Progress(i);
+        QThread::msleep(50);
+    }
+
     qInfo() << QThread::currentThreadId() << " DeleteFilesTask::run...done";
 
     emit Finished();

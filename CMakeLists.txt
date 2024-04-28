@@ -28,7 +28,7 @@ qt_add_qml_module(appQtFileExplorer
     VERSION 1.0
     QML_FILES qml/MainWindow.qml
               qml/FilesView.qml
-              qml/ProgressView.qml
+              qml/ProgressView/ProgressView.qml
               qml/CButton.qml
 )
 

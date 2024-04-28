@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
 import CustomData
+import "ProgressView"
 
 
 Window {
@@ -43,8 +44,8 @@ Window {
                 pEnabled: listView.pSelectedIndexesList.length >= 1
 
                 onClicked: {
-                    pasteButton.pEnabled = true
-                    root.pCuttingActive = true
+                    pCuttingActive = true
+                    pCopyingActive = false
                 }
             }
 
@@ -55,8 +56,7 @@ Window {
                 pEnabled: listView.pSelectedIndexesList.length >= 1
 
                 onClicked: {
-                    pasteButton.pEnabled = true
-                    root.pCopyingActive = true
+                    pCopyingActive = true
                 }
             }
 
@@ -64,18 +64,25 @@ Window {
                 id: pasteButton
                 Layout.fillWidth: parent
                 pText: "Paste"
+                pEnabled: (pCopyingActive ||
+                           pCuttingActive)
 
                 onClicked: {
-                    pEnabled = root.pCuttingActive ? false : true
+                    if (root.pCopyingActive) {
+                        progressView.showCopyingProgress(5, "1", "2")
+                        progressView.pTaskId = controller.copyFiles(["test1", "test2", "test3"],
+                                                                    "test")
+                    }
+                    else if (root.pCuttingActive) {
+                        progressView.showMovingProgress(10, "3", "4")
+                        progressView.pTaskId = controller.moveFiles(["test1", "test2", "test3"],
+                                                                    "test")
+                    }
+                    else {
+                        throw "Incorrect state"
+                    }
 
-                    root.pCopyingActive = false
-                    root.pCuttingActive = false
-
-//                    var taskId = controller.copyFiles(["test1", "test2", "test3"],
-//                                                       "test")
-
-//                    progressView.pTaskId = taskId
-//                    progressView.show()
+                    pCuttingActive = false
                 }
             }
 
@@ -93,10 +100,8 @@ Window {
                 pEnabled: listView.pSelectedIndexesList.length >= 1
 
                 onClicked: {
-                    var taskId = controller.deleteFiles(["test1", "test2", "test3"])
-
-                    progressView.pTaskId = taskId
-                    progressView.show()
+                    progressView.showDeletingProgress(15, "test")
+                    progressView.pTaskId = controller.deleteFiles(["test1", "test2", "test3"])
                 }
             }
 
