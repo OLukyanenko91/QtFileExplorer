@@ -39,6 +39,7 @@ signals:
 private slots:
     void onDirContentsChanged(const ExplorerData::FileList dirContents);
     void onCurDirChanged(const QString path);
+    void onTaskFinished(const qint64 taskId);
 
 public:
     Controller();

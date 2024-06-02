@@ -61,6 +61,19 @@ ListView {
         pSelectedIndexesList = selectedIndexes
     }
 
+    function getSelectedFiles() {
+        var selectedFiles = []
+
+        for(let index in pSelectedIndexesList) {
+            var item = pModel.get(pSelectedIndexesList[index])
+            if (item) {
+                selectedFiles.push(item.path)
+            }
+        }
+
+        return selectedFiles
+    }
+
     // DATA
 
     id: root

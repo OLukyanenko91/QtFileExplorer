@@ -108,7 +108,7 @@ Item {
 
                 Text { id: operationTypeInfo }
                 Text { id: countInfo }
-                Text { text: "item from" }
+                Text { text: "item(s) from" }
                 Text {
                     id: fromInfo
                     color: "blue"
@@ -124,6 +124,7 @@ Item {
             }
 
             RowLayout {
+                id: controls
                 Layout.fillWidth: true
 
                 Text {

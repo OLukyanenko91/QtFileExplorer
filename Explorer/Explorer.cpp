@@ -40,6 +40,12 @@ void Explorer::Cd(const ExplorerData::CdDirection direction)
     }
 }
 
+void Explorer::Update()
+{
+    qInfo() << "Update"
+    SetCurDir(mCurDir.absolutePath());
+}
+
 QStringList Explorer::GetSystemDrivers() const
 {
     QStringList drivers;
@@ -49,7 +55,7 @@ QStringList Explorer::GetSystemDrivers() const
     }
 
     if (drivers.empty()) {
-        std::cerr << "No drivers\n";
+        qWarning() << "No drivers\n";
     }
 
     return drivers;

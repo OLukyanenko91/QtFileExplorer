@@ -9,8 +9,8 @@ Controller::Controller()
 {
     connect(&mExplorer, &Explorer::ContentsChanged, this, &Controller::onDirContentsChanged);
     connect(&mExplorer, &Explorer::CurrentDirChanged, this, &Controller::onCurDirChanged);
+    connect(&mTasksManager, &TasksManager::TaskFinished, this, &Controller::onTaskFinished);
     connect(&mTasksManager, &TasksManager::TaskProgress, this, &Controller::backgroundTaskProgressChanged);
-    connect(&mTasksManager, &TasksManager::TaskFinished, this, &Controller::backgroundTaskFinished);
 }
 
 qint64 Controller::copyFiles(const QList<QString>& files,
@@ -95,4 +95,10 @@ void Controller::onDirContentsChanged(const ExplorerData::FileList dirContents)
 void Controller::onCurDirChanged(const QString path)
 {
     emit currentDirectoryChanged(path);
+}
+
+void Controller::onTaskFinished(const qint64 taskId)
+{
+    mExplorer.Update();
+    emit backgroundTaskFinished(taskId);
 }
