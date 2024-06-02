@@ -18,6 +18,7 @@ signals:
 public:
     void Cd(const QString path);
     void Cd(const ExplorerData::CdDirection direction);
+    void Update();
 
 private:
     QStringList            GetSystemDrivers() const;

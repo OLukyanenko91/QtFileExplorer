@@ -100,8 +100,15 @@ Window {
                 pEnabled: listView.pSelectedIndexesList.length >= 1
 
                 onClicked: {
-                    progressView.showDeletingProgress(15, "test")
-                    progressView.pTaskId = controller.deleteFiles(["test1", "test2", "test3"])
+                    var selectedFiles = listView.getSelectedFiles()
+
+                    if (selectedFiles.length !== 0) {
+                        progressView.showDeletingProgress(selectedFiles.length, curPath.text)
+                        progressView.pTaskId = controller.deleteFiles(selectedFiles)
+                    }
+                    else {
+                        console.error("No selected files for deletion")
+                    }
                 }
             }
 
