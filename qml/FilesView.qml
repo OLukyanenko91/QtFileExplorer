@@ -84,7 +84,9 @@ ListView {
     clip: true
     spacing: 1
     boundsBehavior: Flickable.StopAtBounds
-    ScrollBar.vertical: ScrollBar {}
+    ScrollBar.vertical: ScrollBar {
+        policy: ScrollBar.AlwaysOn
+    }
 
     delegate: Rectangle {
          // FUNCTIONS

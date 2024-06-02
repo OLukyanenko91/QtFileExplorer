@@ -4,8 +4,16 @@
 #include "Explorer.hpp"
 
 
+Explorer::Explorer()
+{
+    connect(&mSystemWatcher, &QFileSystemWatcher::directoryChanged,
+            this, &Explorer::HandleSystemWatcherUpdate);
+}
+
 void Explorer::Cd(const QString path)
 {
+    qInfo() << "Cd, path:" << path;
+
     // Check if it's a folder
     if (File::GetTypeByPath(path) == File::Type::Folder) {
         // Open folder
@@ -27,6 +35,8 @@ void Explorer::Cd(const QString path)
 
 void Explorer::Cd(const ExplorerData::CdDirection direction)
 {
+    qInfo() << "Cd, direction:" << direction;
+
     if (mHistory.IsEmpty()) {
         qWarning() << "History is empty";
         return;
@@ -42,7 +52,7 @@ void Explorer::Cd(const ExplorerData::CdDirection direction)
 
 void Explorer::Update()
 {
-    qInfo() << "Update"
+    qInfo() << "Update";
     SetCurDir(mCurDir.absolutePath());
 }
 
@@ -77,6 +87,11 @@ ExplorerData::FileList Explorer::GetCurDirContents()
 
 void Explorer::SetCurDir(const QString path)
 {
+    qInfo() << "Set cur dir, path:" << path;
+
+    mSystemWatcher.removePath(mCurDir.path());
+    mSystemWatcher.addPath(path);
+
     mCurDir.setPath(path);
 
     if (path == ExplorerData::ROOT_DIRECTORY) {
@@ -92,4 +107,12 @@ void Explorer::SetCurDir(const QString path)
         emit CurrentDirChanged(mCurDir.path().replace("//", "/"));
         emit ContentsChanged(GetCurDirContents());
     }
+}
+
+void Explorer::HandleSystemWatcherUpdate(const QString& path)
+{
+    qInfo() << "Handle system watcher update";
+
+    Q_ASSERT(mCurDir.path() == path);
+    SetCurDir(path);
 }
