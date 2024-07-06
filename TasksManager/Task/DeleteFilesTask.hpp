@@ -5,6 +5,8 @@
 
 class DeleteFilesTask : public Task
 {
+    Q_OBJECT
+
 public:
     explicit DeleteFilesTask(const qint64 id,
                              const QList<QString>& files,

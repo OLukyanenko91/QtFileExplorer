@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import "../"
+import "../utils.js" as Utils
 
 
 Item {
@@ -9,6 +11,8 @@ Item {
     signal pauseTask()
     signal resumeTask()
     signal cancelTask()
+    signal showed()
+    signal hidden()
 
     // PROPERTIES
 
@@ -48,6 +52,7 @@ Item {
                     toPath)
 
         root.visible = true
+        showed()
     }
 
     function hide() {
@@ -81,25 +86,28 @@ Item {
                 // FUNCTIONS
 
                 function reset(operationType: String,
-                                itemsCount: String,
-                                fromPath: String,
-                                toPath: String) {
+                               itemsCount: String,
+                               fromPath: String,
+                               toPath: String) {
                     operationTypeInfo.text = operationType
                     countInfo.text = itemsCount
-                    fromInfo.text = fromPath
-                    toInfo.text = toPath
-
                     to.visible = (toPath ? true : false)
                     controlButton.enabled = true
                     cancelButton.enabled = true
                     progress.indeterminate = false
+
+                    fromInfo.setText(Utils.cutPathEnd(fromPath),
+                                     fromPath)
+                    toInfo.setText(Utils.cutPathEnd(toPath),
+                                   toPath)
                 }
 
                 function clear() {
                     operationTypeInfo.text = ""
                     countInfo.text = ""
-                    fromInfo.text = ""
-                    toInfo.text = ""
+
+                    fromInfo.clear()
+                    toInfo.clear()
                 }
 
                 // DATA
@@ -109,17 +117,17 @@ Item {
                 Text { id: operationTypeInfo }
                 Text { id: countInfo }
                 Text { text: "item(s) from" }
-                Text {
+                CLabel {
                     id: fromInfo
-                    color: "blue"
+                    pColor: "blue"
                 }
                 Text {
                     id: to
                     text: "to"
                 }
-                Text {
+                CLabel {
                     id: toInfo
-                    color: "blue"
+                    pColor: "blue"
                 }
             }
 
@@ -169,4 +177,6 @@ Item {
             }
         }
     }
+
+    onVisibleChanged: visible ? showed() : hidden()
 }

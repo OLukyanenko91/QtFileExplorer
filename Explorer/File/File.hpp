@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QFileInfo>
 #include <QIcon>
+#include <QStorageInfo>
 
 
 class File
@@ -28,14 +29,19 @@ public:
 public:
     File();
     File(const QFileInfo& fileInfo);
-    File(const QString& systemDriver);    
+    File(const QStorageInfo& storage);
 
 public:
+    static QString CreateNewFileName(const QString& path,
+                                     const QString& fileName);
+    static QString GetFileName(const QString& path);
     static QString GetSize(const QList<QString>& filesPaths);
     static Type    GetTypeByPath(const QString& path);
 
 private:
     static QString ConvertBytesToString(const quint64 bytes);
+    static quint16 FindNextCopyFileIndex(const QString& path,
+                                         const QString& fileName);
 
 private:
     QString mName;

@@ -17,17 +17,11 @@ DeleteFilesTask::DeleteFilesTask(const qint64 id,
 
 void DeleteFilesTask::run()
 {
-    qInfo() << QThread::currentThreadId() << "DeleteFilesTask::run...";
+    qInfo() << QThread::currentThreadId() << "Run deleting files task";
 
     for (int i = 0; i < mFiles.size(); ++i) {
-        if (mCanceled) {
-            qInfo() << QThread::currentThreadId() << "DeleteFilesTask::run...canceled";
-            emit Finished();
+        if (!CheckRunning()) {
             return;
-        }
-        if (mPaused) {
-            qInfo() << QThread::currentThreadId() << "DeleteFilesTask::run...paused";
-            mWaitCondition.wait(&mWaitMutex);
         }
 
         bool result {false};
@@ -42,18 +36,16 @@ void DeleteFilesTask::run()
         }
 
         if (result) {
-            qInfo() << QThread::currentThreadId()
-                    << QString("DeleteFilesTask::run...file '%1' deleted").arg(mFiles[i]);
+            qInfo() << QThread::currentThreadId() << QString("File '%1' deleted").arg(mFiles[i]);
         }
         else {
-            qWarning() << QThread::currentThreadId()
-                       << "DeleteFilesTask::run...failed to delete " << mFiles[i];
+            qWarning() << QThread::currentThreadId() << "Failed to delete " << mFiles[i];
         }
 
         emit Progress(float(i + 1) / mFiles.count() * 100);
     }
 
-    qInfo() << QThread::currentThreadId() << "DeleteFilesTask::run...done";
+    qInfo() << QThread::currentThreadId() << "Delete files task finished";
 
     emit Finished();
 }

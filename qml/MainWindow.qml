@@ -4,13 +4,16 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import CustomData
 import "ProgressView"
+import "utils.js" as Utils
 
 
 Window {
     // PROPERTIES
 
-    property bool pCuttingActive: false
-    property bool pCopyingActive: false
+    property bool         pCuttingActive:    false
+    property bool         pCopyingActive:    false
+    property string       pCutCopySourceDir: ""
+    property list<string> pFilesToCutCopy:   []
 
     // DATA
 
@@ -34,18 +37,21 @@ Window {
                 id: newFolderButton
                 Layout.fillWidth: parent
                 pText: "New folder"
-                pEnabled: true
+                pEnabled: curPath.text != ""
             }
 
             CButton {
                 id: cutButton
                 Layout.fillWidth: parent
                 pText: "Cut"
-                pEnabled: listView.pSelectedIndexesList.length >= 1
+                pEnabled: listView.pSelectedIndexesList.length >= 1 &&
+                          curPath.text != ""
 
                 onClicked: {
                     pCuttingActive = true
                     pCopyingActive = false
+                    pFilesToCutCopy = listView.getSelectedFiles()
+                    pCutCopySourceDir = curPath.text
                 }
             }
 
@@ -53,10 +59,14 @@ Window {
                 id: copyButton
                 Layout.fillWidth: parent
                 pText: "Copy"
-                pEnabled: listView.pSelectedIndexesList.length >= 1
+                pEnabled: listView.pSelectedIndexesList.length >= 1 &&
+                          curPath.text != ""
 
                 onClicked: {
                     pCopyingActive = true
+                    pCuttingActive = false
+                    pFilesToCutCopy = listView.getSelectedFiles()
+                    pCutCopySourceDir = curPath.text
                 }
             }
 
@@ -64,14 +74,18 @@ Window {
                 id: pasteButton
                 Layout.fillWidth: parent
                 pText: "Paste"
-                pEnabled: (pCopyingActive ||
-                           pCuttingActive)
+                pEnabled: (pCopyingActive || pCuttingActive) &&
+                          curPath.text != ""
 
                 onClicked: {
+                    Utils.cutPathEnd("test")
+
                     if (root.pCopyingActive) {
-                        progressView.showCopyingProgress(5, "1", "2")
-                        progressView.pTaskId = controller.copyFiles(["test1", "test2", "test3"],
-                                                                    "test")
+                        progressView.showCopyingProgress(pFilesToCutCopy.length,
+                                                         pCutCopySourceDir,
+                                                         curPath.text)
+                        progressView.pTaskId = controller.copyFiles(pFilesToCutCopy,
+                                                                    curPath.text)
                     }
                     else if (root.pCuttingActive) {
                         progressView.showMovingProgress(10, "3", "4")
@@ -90,20 +104,23 @@ Window {
                 id: renameButton
                 Layout.fillWidth: parent
                 pText: "Rename"
-                pEnabled: listView.pSelectedIndexesList.length === 1
+                pEnabled: listView.pSelectedIndexesList.length === 1 &&
+                          curPath.text != ""
             }
 
             CButton {
                 id: deleteButton
                 Layout.fillWidth: parent
                 pText: "Delete"
-                pEnabled: listView.pSelectedIndexesList.length >= 1
+                pEnabled: listView.pSelectedIndexesList.length >= 1 &&
+                          curPath.text != ""
 
                 onClicked: {
                     var selectedFiles = listView.getSelectedFiles()
 
                     if (selectedFiles.length !== 0) {
-                        progressView.showDeletingProgress(selectedFiles.length, curPath.text)
+                        progressView.showDeletingProgress(selectedFiles.length,
+                                                          curPath.text)
                         progressView.pTaskId = controller.deleteFiles(selectedFiles)
                     }
                     else {
@@ -250,6 +267,8 @@ Window {
         onResumeTask: controller.resumeBackgroundTask(pTaskId)
         onPauseTask: controller.pauseBackgroundTask(pTaskId)
         onCancelTask: controller.cancelBackgroundTask(pTaskId)
+        onShowed: listView.enabled = false
+        onHidden: listView.enabled = true
     }
 
     ListModel {

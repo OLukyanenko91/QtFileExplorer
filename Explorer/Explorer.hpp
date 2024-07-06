@@ -25,7 +25,7 @@ public:
     void Update();
 
 private:
-    QStringList            GetSystemDrivers() const;
+    ExplorerData::FileList GetSystemDrivers() const;
     ExplorerData::FileList GetCurDirContents();
     void                   SetCurDir(const QString path);
 

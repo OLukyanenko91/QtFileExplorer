@@ -30,6 +30,8 @@ qt_add_qml_module(appQtFileExplorer
               qml/FilesView.qml
               qml/ProgressView/ProgressView.qml
               qml/CButton.qml
+              qml/CLabel.qml
+              qml/utils.js
 )
 
 target_link_libraries(appQtFileExplorer

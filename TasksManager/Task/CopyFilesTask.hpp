@@ -5,6 +5,8 @@
 
 class CopyFilesTask : public Task
 {
+    Q_OBJECT
+
 public:
     explicit CopyFilesTask(const qint64 id,
                            const QList<QString>& files,

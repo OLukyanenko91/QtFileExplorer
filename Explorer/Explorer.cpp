@@ -1,6 +1,7 @@
 #include <iostream>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QStorageInfo>
 #include "Explorer.hpp"
 
 
@@ -56,19 +57,19 @@ void Explorer::Update()
     SetCurDir(mCurDir.absolutePath());
 }
 
-QStringList Explorer::GetSystemDrivers() const
+ExplorerData::FileList Explorer::GetSystemDrivers() const
 {
-    QStringList drivers;
+    ExplorerData::FileList driversList;
 
-    foreach (QFileInfo drive, QDir::drives()) {
-        drivers << drive.path();
+    foreach (const QStorageInfo& driver, QStorageInfo::mountedVolumes()) {
+        driversList << driver;
     }
 
-    if (drivers.empty()) {
+    if (driversList.empty()) {
         qWarning() << "No drivers\n";
     }
 
-    return drivers;
+    return driversList;
 }
 
 ExplorerData::FileList Explorer::GetCurDirContents()
@@ -95,11 +96,7 @@ void Explorer::SetCurDir(const QString path)
     mCurDir.setPath(path);
 
     if (path == ExplorerData::ROOT_DIRECTORY) {
-        ExplorerData::FileList systemDrivers;
-        foreach (const auto& systemDriver, GetSystemDrivers()) {
-            systemDrivers << systemDriver;
-        }
-
+        ExplorerData::FileList systemDrivers = GetSystemDrivers();
         emit CurrentDirChanged(QString());
         emit ContentsChanged(systemDrivers);
     }
