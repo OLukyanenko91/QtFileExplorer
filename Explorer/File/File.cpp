@@ -1,6 +1,15 @@
 #include <QDir>
 #include <QFileIconProvider>
+#include <QRegularExpression>
 #include "File.hpp"
+
+
+namespace
+{
+    const char*  COPY_FILE_NAME_REGEX_TEMPLATE = R"(^\Q%1\E - Copy \((\d+)\).*$)";
+    const quint8 REGEX_FIRST_CAPTURED          = 1;
+    const quint8 DEFAULT_NEXT_COPY_FILE_INDEX  = 2;
+}
 
 
 File::File()
@@ -12,10 +21,46 @@ File::File(const QFileInfo& fileInfo) {
     mName = fileInfo.fileName();
 }
 
-File::File(const QString& systemDriver) {
+File::File(const QStorageInfo& storage) {
     mType = Type::Driver;
-    mPath = systemDriver;
-    mName = QString(systemDriver).remove(QChar('/'));
+    mPath = storage.rootPath();
+    mName = QString("%1 (%2)").arg(storage.name(),
+                                   storage.rootPath().removeLast());
+}
+
+QString File::CreateNewFileName(const QString& path,
+                                const QString& fileName)
+{
+    qInfo() << "Create new file name, path:" << path << ", file name:" << fileName;
+
+    QFileInfo fileInfo(path + '/' + fileName);
+    QString fileExt = fileInfo.suffix();
+    QString baseFileName = fileInfo.baseName();
+
+    QString newFileName = QString("%1 - Copy.%2").arg(baseFileName, fileExt);
+    if (QFileInfo::exists(path + '/' + newFileName)) {
+        newFileName = QString("%1 - Copy (2).%2").arg(baseFileName, fileExt);
+        if (QFileInfo::exists(path + '/' + newFileName)) {
+            auto nextIndex = FindNextCopyFileIndex(path, fileName);
+            return QString("%1 - Copy (%2).%3").arg(baseFileName,
+                                                    QString::number(nextIndex),
+                                                    fileExt);
+        }
+        else {
+            return newFileName;
+        }
+    }
+    else {
+        return newFileName;
+    }
+}
+
+QString File::GetFileName(const QString& path)
+{
+    auto splittedPath = path.split('/', Qt::SkipEmptyParts);
+
+    Q_ASSERT(splittedPath.length() > 1);
+    return splittedPath.last();
 }
 
 QString File::GetSize(const QList<QString>& filesPaths)
@@ -28,7 +73,6 @@ QString File::GetSize(const QList<QString>& filesPaths)
             totalSize += file.size();
         }
         else {
-//            qWarning() << "Can't open file, path" << filePath;
             totalSize = 0;
             break;
         }
@@ -72,4 +116,49 @@ QString File::ConvertBytesToString(const quint64 bytes)
         qWarning() << "Can't convert so many bytes..." << bytes;
         return QString();
     }
+}
+
+quint16 File::FindNextCopyFileIndex(const QString& path,
+                                    const QString& fileName)
+{
+    QDir dir(path);
+    Q_ASSERT(dir.exists());
+
+    auto nameWithoutExt = QFileInfo(path, fileName).baseName();
+    auto filesInfoList = dir.entryInfoList(QDir::Files |
+                                           QDir::Dirs |
+                                           QDir::QDir::NoDotAndDotDot);
+
+    // Convert file infos list to regex matches list
+    QList<QRegularExpressionMatch> regexMatchesList;
+    foreach (const auto& fileInfo, filesInfoList) {
+        QRegularExpression re(QString(COPY_FILE_NAME_REGEX_TEMPLATE).arg(nameWithoutExt));
+        auto match = re.match(fileInfo.fileName());
+
+        if (match.hasMatch() && match.hasCaptured(REGEX_FIRST_CAPTURED)) {
+            regexMatchesList.append(match);
+        }
+    }
+
+    // Sort regex matches list
+    std::sort(regexMatchesList.begin(), regexMatchesList.end(),
+              [&](const auto& lRegexMatch, const auto& rRegexMatch){
+        return lRegexMatch.captured(REGEX_FIRST_CAPTURED).toInt() <
+               rRegexMatch.captured(REGEX_FIRST_CAPTURED).toInt();
+    });
+
+    // Determine next copy file index
+    quint16 nextCopyFileIndex = DEFAULT_NEXT_COPY_FILE_INDEX;
+    foreach (const auto& regexMatch, regexMatchesList) {
+        auto curCopyFileIndex = regexMatch.captured(REGEX_FIRST_CAPTURED);
+
+        if ((curCopyFileIndex.toInt() - nextCopyFileIndex) > 1) {
+            return nextCopyFileIndex + 1;
+        }
+        else {
+            nextCopyFileIndex = curCopyFileIndex.toInt();
+        }
+    }
+
+    return nextCopyFileIndex + 1;
 }

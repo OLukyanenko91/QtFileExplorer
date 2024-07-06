@@ -15,24 +15,18 @@ MoveFilesTask::MoveFilesTask(const qint64 id,
 
 void MoveFilesTask::run()
 {
-    qInfo() << QThread::currentThreadId() << " MoveFilesTask::run...";
+    qInfo() << QThread::currentThreadId() << "Run moving files task";
 
     for (int i = 1; i <= 100; ++i) {
-        if (mCanceled) {
-            qInfo() << QThread::currentThreadId() << " MoveFilesTask::run...canceled";
-            emit Finished();
+        if (!CheckRunning()) {
             return;
-        }
-        if (mPaused) {
-            qInfo() << QThread::currentThreadId() << " MoveFilesTask::run...paused";
-            mWaitCondition.wait(&mWaitMutex);
         }
 
         emit Progress(i);
         QThread::msleep(50);
     }
 
-    qInfo() << QThread::currentThreadId() << " MoveFilesTask::run...done";
+    qInfo() << QThread::currentThreadId() << " Move files task finished";
 
     emit Finished();
 }

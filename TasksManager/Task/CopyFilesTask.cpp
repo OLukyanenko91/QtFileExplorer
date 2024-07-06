@@ -1,3 +1,4 @@
+#include <limits>
 #include <QDebug>
 #include "CopyFilesTask.hpp"
 
@@ -15,24 +16,22 @@ CopyFilesTask::CopyFilesTask(const qint64 id,
 
 void CopyFilesTask::run()
 {
-    qInfo() << QThread::currentThreadId() << " CopyFilesTask::run...";
+    qInfo() << QThread::currentThreadId() << "Run copying files task";
 
-    for (int i = 1; i <= 100; ++i) {
-        if (mCanceled) {
-            qInfo() << QThread::currentThreadId() << " CopyFilesTask::run...canceled";
-            emit Finished();
+    for (int i = 0; i < mFiles.size(); ++i) {
+        if (!CheckRunning()) {
             return;
         }
-        if (mPaused) {
-            qInfo() << QThread::currentThreadId() << " CopyFilesTask::run...paused";
-            mWaitCondition.wait(&mWaitMutex);
-        }
 
-        emit Progress(i);
-        QThread::msleep(50);
+        qInfo() << QThread::currentThreadId() << "Copying file" << mFiles[i];
+
+        bool copyResult = Task::CopyFile(mFiles[i], mDestPath, i);
+        if (!copyResult) {
+            continue;
+        }
     }
 
-    qInfo() << QThread::currentThreadId() << " CopyFilesTask::run...done";
+    qInfo() << QThread::currentThreadId() << "Copy files task finished";
 
     emit Finished();
 }

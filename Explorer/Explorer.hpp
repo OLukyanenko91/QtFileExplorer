@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QDir>
 #include <QIcon>
+#include <QFileSystemWatcher>
 #include "History/History.hpp"
 #include "ExplorerData.hpp"
 
@@ -16,16 +17,22 @@ signals:
     void CurrentDirChanged(const QString path);
 
 public:
+    Explorer();
+
+public:
     void Cd(const QString path);
     void Cd(const ExplorerData::CdDirection direction);
     void Update();
 
 private:
-    QStringList            GetSystemDrivers() const;
+    ExplorerData::FileList GetSystemDrivers() const;
     ExplorerData::FileList GetCurDirContents();
     void                   SetCurDir(const QString path);
 
+    void                   HandleSystemWatcherUpdate(const QString& path);
+
 private:
-    QDir    mCurDir;
-    History mHistory;
+    QFileSystemWatcher mSystemWatcher;
+    QDir               mCurDir;
+    History            mHistory;
 };

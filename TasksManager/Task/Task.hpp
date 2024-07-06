@@ -12,6 +12,11 @@ class Task : public QThread
 {
     Q_OBJECT
 
+signals:
+    void Progress(const quint8 progress); // 0-100%
+    void Finished();
+    void Error();
+
 public:
     explicit Task(const qint64 id,
                   const QList<QString>& files,
@@ -31,10 +36,11 @@ public:
 public:
     static qint64 GenerateId();
 
-signals:
-    void Progress(const quint8 progress); // 0-100%
-    void Finished();
-    void Error();
+protected:
+    bool CheckRunning();
+    bool CopyFile(const QString& srcFilePath,
+                  const QString& dstPath,
+                  const quint16 index);
 
 protected:
     qint64             mId;

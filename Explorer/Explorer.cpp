@@ -1,11 +1,20 @@
 #include <iostream>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QStorageInfo>
 #include "Explorer.hpp"
 
 
+Explorer::Explorer()
+{
+    connect(&mSystemWatcher, &QFileSystemWatcher::directoryChanged,
+            this, &Explorer::HandleSystemWatcherUpdate);
+}
+
 void Explorer::Cd(const QString path)
 {
+    qInfo() << "Cd, path:" << path;
+
     // Check if it's a folder
     if (File::GetTypeByPath(path) == File::Type::Folder) {
         // Open folder
@@ -27,6 +36,8 @@ void Explorer::Cd(const QString path)
 
 void Explorer::Cd(const ExplorerData::CdDirection direction)
 {
+    qInfo() << "Cd, direction:" << direction;
+
     if (mHistory.IsEmpty()) {
         qWarning() << "History is empty";
         return;
@@ -42,23 +53,23 @@ void Explorer::Cd(const ExplorerData::CdDirection direction)
 
 void Explorer::Update()
 {
-    qInfo() << "Update"
+    qInfo() << "Update";
     SetCurDir(mCurDir.absolutePath());
 }
 
-QStringList Explorer::GetSystemDrivers() const
+ExplorerData::FileList Explorer::GetSystemDrivers() const
 {
-    QStringList drivers;
+    ExplorerData::FileList driversList;
 
-    foreach (QFileInfo drive, QDir::drives()) {
-        drivers << drive.path();
+    foreach (const QStorageInfo& driver, QStorageInfo::mountedVolumes()) {
+        driversList << driver;
     }
 
-    if (drivers.empty()) {
+    if (driversList.empty()) {
         qWarning() << "No drivers\n";
     }
 
-    return drivers;
+    return driversList;
 }
 
 ExplorerData::FileList Explorer::GetCurDirContents()
@@ -77,14 +88,15 @@ ExplorerData::FileList Explorer::GetCurDirContents()
 
 void Explorer::SetCurDir(const QString path)
 {
+    qInfo() << "Set cur dir, path:" << path;
+
+    mSystemWatcher.removePath(mCurDir.path());
+    mSystemWatcher.addPath(path);
+
     mCurDir.setPath(path);
 
     if (path == ExplorerData::ROOT_DIRECTORY) {
-        ExplorerData::FileList systemDrivers;
-        foreach (const auto& systemDriver, GetSystemDrivers()) {
-            systemDrivers << systemDriver;
-        }
-
+        ExplorerData::FileList systemDrivers = GetSystemDrivers();
         emit CurrentDirChanged(QString());
         emit ContentsChanged(systemDrivers);
     }
@@ -92,4 +104,12 @@ void Explorer::SetCurDir(const QString path)
         emit CurrentDirChanged(mCurDir.path().replace("//", "/"));
         emit ContentsChanged(GetCurDirContents());
     }
+}
+
+void Explorer::HandleSystemWatcherUpdate(const QString& path)
+{
+    qInfo() << "Handle system watcher update";
+
+    Q_ASSERT(mCurDir.path() == path);
+    SetCurDir(path);
 }
