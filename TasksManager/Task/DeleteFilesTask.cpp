@@ -24,24 +24,7 @@ void DeleteFilesTask::run()
             return;
         }
 
-        bool result {false};
-        auto type = File::GetTypeByPath(mFiles[i]);
-
-        if (type == File::Type::File) {
-            result = QFile::remove(mFiles[i]);
-        }
-        else if (type == File::Type::Folder) {
-            QDir dir(mFiles[i]);
-            result = dir.removeRecursively();
-        }
-
-        if (result) {
-            qInfo() << QThread::currentThreadId() << QString("File '%1' deleted").arg(mFiles[i]);
-        }
-        else {
-            qWarning() << QThread::currentThreadId() << "Failed to delete " << mFiles[i];
-        }
-
+        Task::DeleteFile(mFiles[i]);
         emit Progress(float(i + 1) / mFiles.count() * 100);
     }
 

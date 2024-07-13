@@ -23,12 +23,8 @@ void CopyFilesTask::run()
             return;
         }
 
-        qInfo() << QThread::currentThreadId() << "Copying file" << mFiles[i];
-
-        bool copyResult = Task::CopyFile(mFiles[i], mDestPath, i);
-        if (!copyResult) {
-            continue;
-        }
+        Task::CopyFile(mFiles[i], mDestPath, i);
+        emit Progress(float(i + 1) / mFiles.count() * 100);
     }
 
     qInfo() << QThread::currentThreadId() << "Copy files task finished";

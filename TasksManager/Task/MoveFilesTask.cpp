@@ -17,13 +17,19 @@ void MoveFilesTask::run()
 {
     qInfo() << QThread::currentThreadId() << "Run moving files task";
 
-    for (int i = 1; i <= 100; ++i) {
+    for (int i = 0; i < mFiles.size(); ++i) {
         if (!CheckRunning()) {
             return;
         }
 
-        emit Progress(i);
-        QThread::msleep(50);
+        qInfo() << QThread::currentThreadId() << "Moving file" << mFiles[i];
+
+        bool copyResult = Task::CopyFile(mFiles[i], mDestPath, i);
+        if (copyResult) {
+            Task::DeleteFile(mFiles[i]);
+        }
+
+        emit Progress(float(i + 1) / mFiles.count() * 100);
     }
 
     qInfo() << QThread::currentThreadId() << " Move files task finished";

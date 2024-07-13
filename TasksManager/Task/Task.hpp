@@ -41,6 +41,7 @@ protected:
     bool CopyFile(const QString& srcFilePath,
                   const QString& dstPath,
                   const quint16 index);
+    bool DeleteFile(const QString& filePath);
 
 protected:
     qint64             mId;

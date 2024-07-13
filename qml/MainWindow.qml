@@ -37,7 +37,7 @@ Window {
                 id: newFolderButton
                 Layout.fillWidth: parent
                 pText: "New folder"
-                pEnabled: curPath.text != ""
+                pEnabled: curPath.text !== ""
             }
 
             CButton {
@@ -45,7 +45,7 @@ Window {
                 Layout.fillWidth: parent
                 pText: "Cut"
                 pEnabled: listView.pSelectedIndexesList.length >= 1 &&
-                          curPath.text != ""
+                          curPath.text !== ""
 
                 onClicked: {
                     pCuttingActive = true
@@ -60,7 +60,7 @@ Window {
                 Layout.fillWidth: parent
                 pText: "Copy"
                 pEnabled: listView.pSelectedIndexesList.length >= 1 &&
-                          curPath.text != ""
+                          curPath.text !== ""
 
                 onClicked: {
                     pCopyingActive = true
@@ -75,11 +75,9 @@ Window {
                 Layout.fillWidth: parent
                 pText: "Paste"
                 pEnabled: (pCopyingActive || pCuttingActive) &&
-                          curPath.text != ""
+                          curPath.text !== ""
 
                 onClicked: {
-                    Utils.cutPathEnd("test")
-
                     if (root.pCopyingActive) {
                         progressView.showCopyingProgress(pFilesToCutCopy.length,
                                                          pCutCopySourceDir,
@@ -88,9 +86,11 @@ Window {
                                                                     curPath.text)
                     }
                     else if (root.pCuttingActive) {
-                        progressView.showMovingProgress(10, "3", "4")
-                        progressView.pTaskId = controller.moveFiles(["test1", "test2", "test3"],
-                                                                    "test")
+                        progressView.showMovingProgress(pFilesToCutCopy.length,
+                                                        pCutCopySourceDir,
+                                                        curPath.text)
+                        progressView.pTaskId = controller.moveFiles(pFilesToCutCopy,
+                                                                    curPath.text)
                     }
                     else {
                         throw "Incorrect state"
@@ -105,7 +105,7 @@ Window {
                 Layout.fillWidth: parent
                 pText: "Rename"
                 pEnabled: listView.pSelectedIndexesList.length === 1 &&
-                          curPath.text != ""
+                          curPath.text !== ""
             }
 
             CButton {
@@ -113,7 +113,7 @@ Window {
                 Layout.fillWidth: parent
                 pText: "Delete"
                 pEnabled: listView.pSelectedIndexesList.length >= 1 &&
-                          curPath.text != ""
+                          curPath.text !== ""
 
                 onClicked: {
                     var selectedFiles = listView.getSelectedFiles()
