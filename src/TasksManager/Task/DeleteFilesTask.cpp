@@ -2,7 +2,6 @@
 #include <QDir>
 #include <QFile>
 #include "DeleteFilesTask.hpp"
-#include "Explorer/File/File.hpp"
 
 
 DeleteFilesTask::DeleteFilesTask(const qint64 id,

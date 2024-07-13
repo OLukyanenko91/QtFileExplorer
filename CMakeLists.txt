@@ -9,18 +9,18 @@ find_package(Qt6 6.2 REQUIRED COMPONENTS Quick QuickControls2 Widgets)
 qt_standard_project_setup()
 
 qt_add_executable(appQtFileExplorer
-    main.cpp
-    Controller.cpp
-    Explorer/Explorer.cpp
-    Explorer/ExplorerData.hpp
-    Explorer/History/History.cpp
-    Explorer/File/File.cpp
-    Explorer/File/FileIconProvider.cpp
-    TasksManager/TasksManager.cpp
-    TasksManager/Task/Task.cpp
-    TasksManager/Task/CopyFilesTask.cpp
-    TasksManager/Task/DeleteFilesTask.cpp
-    TasksManager/Task/MoveFilesTask.cpp
+    src/main.cpp
+    src/Controller.cpp
+    src/Explorer/Explorer.cpp
+    src/Explorer/ExplorerData.hpp
+    src/Explorer/History/History.cpp
+    src/Explorer/File/File.cpp
+    src/Explorer/File/FileIconProvider.cpp
+    src/TasksManager/TasksManager.cpp
+    src/TasksManager/Task/Task.cpp
+    src/TasksManager/Task/CopyFilesTask.cpp
+    src/TasksManager/Task/DeleteFilesTask.cpp
+    src/TasksManager/Task/MoveFilesTask.cpp
 )
 
 qt_add_qml_module(appQtFileExplorer

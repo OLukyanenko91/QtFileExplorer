@@ -1,8 +1,8 @@
 #include <QDateTime>
 #include <QFile>
 #include "Task.hpp"
-#include "Explorer/File/File.hpp"
-#include "Common.hpp"
+#include "src/Explorer/File/File.hpp"
+#include "src/Common.hpp"
 
 
 Task::Task(const qint64 id,
