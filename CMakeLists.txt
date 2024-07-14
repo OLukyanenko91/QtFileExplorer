@@ -29,6 +29,7 @@ qt_add_qml_module(appQtFileExplorer
     QML_FILES qml/MainWindow.qml
               qml/FilesView.qml
               qml/ProgressView/ProgressView.qml
+              qml/InputDialog.qml
               qml/CButton.qml
               qml/CLabel.qml
               qml/utils.js

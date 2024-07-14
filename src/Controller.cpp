@@ -70,6 +70,11 @@ void Controller::cancelBackgroundTask(const qint64 taskId)
     mTasksManager.CancelTask(taskId);
 }
 
+void Controller::createDirectory(const QString path)
+{
+    File::CreateDirectory(path);
+}
+
 QString Controller::rootDirectory() const
 {
     return ExplorerData::ROOT_DIRECTORY;

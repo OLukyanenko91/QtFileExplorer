@@ -34,6 +34,7 @@ public:
 public:
     static QString CreateNewFileName(const QString& path,
                                      const QString& fileName);
+    static void    CreateDirectory(const QString& path);
     static QString GetFileName(const QString& path);
     static QString GetSize(const QList<QString>& filesPaths);
     static Type    GetTypeByPath(const QString& path);

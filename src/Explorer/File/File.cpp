@@ -55,6 +55,21 @@ QString File::CreateNewFileName(const QString& path,
     }
 }
 
+void File::CreateDirectory(const QString& path)
+{
+    qInfo() << "Create directory, path" << path;
+
+    if (QDir(path).exists()) {
+        qWarning() << "Directory already exists";
+    }
+    else {
+        bool result = QDir().mkdir(path);
+        if (!result) {
+            qWarning() << "Failed to create a directory";
+        }
+    }
+}
+
 QString File::GetFileName(const QString& path)
 {
     auto splittedPath = path.split('/', Qt::SkipEmptyParts);

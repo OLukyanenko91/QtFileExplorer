@@ -27,6 +27,8 @@ public:
     Q_INVOKABLE void resumeBackgroundTask(const qint64 taskId);
     Q_INVOKABLE void cancelBackgroundTask(const qint64 taskId);
 
+    Q_INVOKABLE void createDirectory(const QString path);
+
     Q_PROPERTY(QString rootDirectory READ rootDirectory)
 
 signals:

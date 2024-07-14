@@ -38,6 +38,10 @@ Window {
                 Layout.fillWidth: parent
                 pText: "New folder"
                 pEnabled: curPath.text !== ""
+
+                onClicked: {
+                    newFolderDialog.show()
+                }
             }
 
             CButton {
@@ -269,6 +273,19 @@ Window {
         onCancelTask: controller.cancelBackgroundTask(pTaskId)
         onShowed: listView.enabled = false
         onHidden: listView.enabled = true
+    }
+
+    InputDialog {
+        id: newFolderDialog
+        anchors.fill: parent
+        pTip: "Enter a folder name"
+
+        onShowed: listView.enabled = false
+        onHidden: listView.enabled = true
+        onAccepted: (input) => {
+            controller.createDirectory(curPath.text + "/" + input)
+            hide()
+        }
     }
 
     ListModel {
