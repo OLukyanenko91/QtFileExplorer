@@ -179,7 +179,22 @@ Window {
 
             CButton {
                 text: "^"
-                pEnabled: true
+                pEnabled: curPath.text
+
+                onPressed: {
+                    if (curPath.text.endsWith('/')) {
+                        controller.open(controller.rootDirectory)
+                    }
+                    else {
+                        let newPath = Utils.cutOffPathEnd(curPath.text)
+                        if (newPath !== "") {
+                            controller.open(newPath)
+                        }
+                        else {
+                            console.log("Failed to go up, wrong path")
+                        }
+                    }
+                }
             }
 
             TextField {
@@ -187,6 +202,7 @@ Window {
                 Layout.fillWidth: parent
                 Layout.preferredHeight: 35
                 placeholderText: "Current path"
+                readOnly: true
             }
 
             TextField {
