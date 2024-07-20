@@ -15,8 +15,13 @@ Item {
 
     // FUNCTIONS
 
-    function show() {
+    function show(inputText) {
         root.visible = true
+
+        if (inputText) {
+            input.text = inputText
+            input.pDefaultInput = inputText
+        }
     }
 
     function hide() {
@@ -64,6 +69,9 @@ Item {
                 id: inputLayout
 
                 TextField {
+                    // PROPERTIES
+                    property string pDefaultInput: ""
+
                     // FUNCTIONS
 
                     function clear() {
@@ -83,7 +91,8 @@ Item {
 
                 CButton {
                     pText: "Ok"
-                    pEnabled: input.text
+                    pEnabled: input.text &&
+                              input.text !== input.pDefaultInput
 
                     onPressed: {
                         accepted(input.text)

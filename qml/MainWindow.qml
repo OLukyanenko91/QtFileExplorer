@@ -110,6 +110,17 @@ Window {
                 pText: "Rename"
                 pEnabled: listView.pSelectedIndexesList.length === 1 &&
                           curPath.text !== ""
+
+                onClicked: {
+                    var selectedFiles = listView.getSelectedFiles()
+
+                    if (selectedFiles.length === 1) {
+                        renameFileDialog.show(Utils.cutPathEnd(selectedFiles[0]))
+                    }
+                    else {
+                        console.log("Failed to rename a file, more than one file is selected")
+                    }
+                }
             }
 
             CButton {
@@ -285,6 +296,26 @@ Window {
         onAccepted: (input) => {
             controller.createDirectory(curPath.text + "/" + input)
             hide()
+        }
+    }
+
+    InputDialog {
+        id: renameFileDialog
+        anchors.fill: parent
+        pTip: "Enter a new name"
+
+        onShowed: listView.enabled = false
+        onHidden: listView.enabled = true
+        onAccepted: (input) => {
+            let selectedFiles = listView.getSelectedFiles()
+            if (selectedFiles.length === 1) {
+                controller.renameFile(selectedFiles[0], input)
+            }
+            else {
+                console.log("Selected files more than one")
+            }
+
+            renameFileDialog.hide()
         }
     }
 

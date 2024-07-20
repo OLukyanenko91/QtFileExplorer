@@ -70,6 +70,21 @@ void File::CreateDirectory(const QString& path)
     }
 }
 
+void File::RenameFile(const QString& path,
+                      const QString& newName)
+{
+    qInfo() << "Rename file, path" << path << ", new name" << newName;
+    Q_ASSERT(QFile::exists(path));
+
+    QFileInfo fileInfo(path);
+    QString newPath = fileInfo.absolutePath() + "/" + newName;
+
+    bool result = QFile::rename(path, newPath);
+    if (!result) {
+        qWarning() << "Failed to rename the file";
+    }
+}
+
 QString File::GetFileName(const QString& path)
 {
     auto splittedPath = path.split('/', Qt::SkipEmptyParts);

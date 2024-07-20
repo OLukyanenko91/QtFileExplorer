@@ -75,6 +75,12 @@ void Controller::createDirectory(const QString path)
     File::CreateDirectory(path);
 }
 
+void Controller::renameFile(const QString filePath,
+                            const QString newName)
+{
+    File::RenameFile(filePath, newName);
+}
+
 QString Controller::rootDirectory() const
 {
     return ExplorerData::ROOT_DIRECTORY;
