@@ -28,8 +28,10 @@ qt_add_qml_module(appQtFileExplorer
     VERSION 1.0
     QML_FILES qml/MainWindow.qml
               qml/FilesView.qml
-              qml/ProgressView/ProgressView.qml
-              qml/InputDialog.qml
+              qml/Dialogs/ProgressDialog.qml
+              qml/Dialogs/InputDialog.qml
+              qml/Dialogs/PropertiesDialogs/FilePropertiesDialog.qml
+              qml/Dialogs/PropertiesDialogs/DriverPropertiesDialog.qml
               qml/CButton.qml
               qml/CLabel.qml
               qml/utils.js

@@ -7,10 +7,12 @@
 
 Controller::Controller()
 {
-    connect(&mExplorer, &Explorer::ContentsChanged, this, &Controller::onDirContentsChanged);
-    connect(&mExplorer, &Explorer::CurrentDirChanged, this, &Controller::onCurDirChanged);
-    connect(&mTasksManager, &TasksManager::TaskFinished, this, &Controller::onTaskFinished);
-    connect(&mTasksManager, &TasksManager::TaskProgress, this, &Controller::backgroundTaskProgressChanged);
+    connectSignals();
+}
+
+Controller::~Controller()
+{
+    disconnectSignals();
 }
 
 qint64 Controller::copyFiles(const QList<QString>& files,
@@ -86,6 +88,38 @@ QString Controller::rootDirectory() const
     return ExplorerData::ROOT_DIRECTORY;
 }
 
+void Controller::connectSignals()
+{
+    // Explorer signals
+    connect(&mExplorer, &Explorer::ContentsChanged,
+            this, &Controller::contentsChanged);
+    connect(&mExplorer, &Explorer::CurrentDirChanged,
+            this, &Controller::currentDirectoryChanged);
+    connect(&mExplorer, &Explorer::GlobalHistoryPositionChanged,
+            this, &Controller::handleGlobalHistoryPosChanged);
+    // Tasks manager signals
+    connect(&mTasksManager, &TasksManager::TaskFinished,
+            this, &Controller::handleTaskFinished);
+    connect(&mTasksManager, &TasksManager::TaskProgress,
+            this, &Controller::backgroundTaskProgressChanged);
+}
+
+void Controller::disconnectSignals()
+{
+    // Explorer signals
+    disconnect(&mExplorer, &Explorer::ContentsChanged,
+               this, &Controller::contentsChanged);
+    disconnect(&mExplorer, &Explorer::CurrentDirChanged,
+               this, &Controller::currentDirectoryChanged);
+    disconnect(&mExplorer, &Explorer::GlobalHistoryPositionChanged,
+               this, &Controller::handleGlobalHistoryPosChanged);
+    // Tasks manager signals
+    disconnect(&mTasksManager, &TasksManager::TaskFinished,
+               this, &Controller::handleTaskFinished);
+    disconnect(&mTasksManager, &TasksManager::TaskProgress,
+               this, &Controller::backgroundTaskProgressChanged);
+}
+
 qint64 Controller::runNewTask(Task* newTask)
 {
     if (!mTasksManager.RunTask(newTask)) {
@@ -98,18 +132,16 @@ qint64 Controller::runNewTask(Task* newTask)
     return newTask->GetId();
 }
 
-void Controller::onDirContentsChanged(const ExplorerData::FileList dirContents)
-{
-    emit contentsChanged(dirContents);
-}
-
-void Controller::onCurDirChanged(const QString path)
-{
-    emit currentDirectoryChanged(path);
-}
-
-void Controller::onTaskFinished(const qint64 taskId)
+void Controller::handleTaskFinished(const qint64 taskId)
 {
     mExplorer.Update();
     emit backgroundTaskFinished(taskId);
+}
+
+void Controller::handleGlobalHistoryPosChanged(const NHistory::GlobalPosition position)
+{
+    emit setGoBackEnabled(position == NHistory::GlobalPosition::MIDDLE ||
+                          position == NHistory::GlobalPosition::END);
+    emit setGoForwardEnabled(position == NHistory::GlobalPosition::MIDDLE ||
+                             position == NHistory::GlobalPosition::BEGIN);
 }

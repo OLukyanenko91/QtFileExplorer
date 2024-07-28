@@ -15,6 +15,7 @@ class Explorer : public QObject
 signals:
     void ContentsChanged(const ExplorerData::FileList dirContents);
     void CurrentDirChanged(const QString path);
+    void GlobalHistoryPositionChanged(const NHistory::GlobalPosition position);
 
 public:
     Explorer();

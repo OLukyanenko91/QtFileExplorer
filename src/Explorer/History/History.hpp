@@ -1,13 +1,28 @@
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include <QStringList>
 
 
-class History
+namespace NHistory
 {
-    static const int MAX_SIZE         = 10;
-    static const int INVALID_POSITION = -1;
+    enum class GlobalPosition
+    {
+        UNKNOWN = 0,
+        BEGIN,
+        MIDDLE,
+        END
+    };
+}
+
+
+class History : public QObject
+{
+    Q_OBJECT
+
+signals:
+    void GlobalPositionNotification(const NHistory::GlobalPosition position);
 
 public:
     History();
@@ -19,6 +34,9 @@ public:
     bool    IsEmpty();
 
 private:
+    void DetermineGlobalPosition();
+
+private:
     QStringList mDirs;
-    int         mCurPosition = INVALID_POSITION;
+    int         mCurPosition;
 };

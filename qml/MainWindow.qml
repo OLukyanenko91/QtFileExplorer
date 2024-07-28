@@ -3,7 +3,7 @@ import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
 import CustomData
-import "ProgressView"
+import "Dialogs"
 import "utils.js" as Utils
 
 
@@ -83,17 +83,17 @@ Window {
 
                 onClicked: {
                     if (root.pCopyingActive) {
-                        progressView.showCopyingProgress(pFilesToCutCopy.length,
+                        progressDialog.showCopyingProgress(pFilesToCutCopy.length,
                                                          pCutCopySourceDir,
                                                          curPath.text)
-                        progressView.pTaskId = controller.copyFiles(pFilesToCutCopy,
+                        progressDialog.pTaskId = controller.copyFiles(pFilesToCutCopy,
                                                                     curPath.text)
                     }
                     else if (root.pCuttingActive) {
-                        progressView.showMovingProgress(pFilesToCutCopy.length,
+                        progressDialog.showMovingProgress(pFilesToCutCopy.length,
                                                         pCutCopySourceDir,
                                                         curPath.text)
-                        progressView.pTaskId = controller.moveFiles(pFilesToCutCopy,
+                        progressDialog.pTaskId = controller.moveFiles(pFilesToCutCopy,
                                                                     curPath.text)
                     }
                     else {
@@ -134,9 +134,9 @@ Window {
                     var selectedFiles = listView.getSelectedFiles()
 
                     if (selectedFiles.length !== 0) {
-                        progressView.showDeletingProgress(selectedFiles.length,
+                        progressDialog.showDeletingProgress(selectedFiles.length,
                                                           curPath.text)
-                        progressView.pTaskId = controller.deleteFiles(selectedFiles)
+                        progressDialog.pTaskId = controller.deleteFiles(selectedFiles)
                     }
                     else {
                         console.error("No selected files for deletion")
@@ -149,6 +149,18 @@ Window {
                 Layout.fillWidth: parent
                 pText: "Properties"
                 pEnabled: listView.pSelectedIndexesList.length === 1
+
+                onClicked: {
+                    var selectedIndexes = listView.pSelectedIndexesList
+
+                    if (selectedIndexes.length !== 1) {
+                        console.log("The number of selected files isn't equal to 1")
+                    }
+                    else {
+                        let item = model.getItem(selectedIndexes[0])
+                        console.log(item.type)
+                    }
+                }
             }
         }
 
@@ -158,8 +170,9 @@ Window {
             Layout.fillWidth: parent
 
             CButton {
+                id: goBackButton
                 pText: "<"
-                pEnabled: true
+                pEnabled: false
 
                 onPressed: {
                     statusBar.clear()
@@ -168,8 +181,9 @@ Window {
             }
 
             CButton {
+                id: goForwardButton
                 text: ">"
-                pEnabled: true
+                pEnabled: false
 
                 onPressed: {
                     statusBar.clear()
@@ -291,8 +305,8 @@ Window {
         }
     }
 
-    ProgressView {
-        id: progressView
+    ProgressDialog {
+        id: progressDialog
         anchors.fill: parent
 
         onResumeTask: controller.resumeBackgroundTask(pTaskId)
@@ -335,6 +349,11 @@ Window {
         }
     }
 
+    Loader {
+        id: propertiesDialogLoader
+        anchors.fill: parent
+    }
+
     ListModel {
         // FUNCTIONS
 
@@ -349,6 +368,15 @@ Window {
         function appendItems(items) {
             for(let index in items) {
                 model.appendItem(items[index])
+            }
+        }
+
+        function getItem(index) {
+            if (index >= 0 && index <= model.count) {
+                return model.get(index)
+            }
+            else {
+                console.log("Incorrect index")
             }
         }
 
@@ -377,6 +405,23 @@ Window {
     Connections {
         // FUNCTIONS
 
+        function onShowed() {
+            listView.enabled = false
+        }
+
+        function onHidden() {
+            listView.enabled = true
+        }
+
+        // DATA
+
+        id: loaderConnections
+        target: propertiesDialogLoader.item
+    }
+
+    Connections {
+        // FUNCTIONS
+
         function onContentsChanged(contents) {
             listView.clearSelections()
             model.clear()
@@ -389,15 +434,24 @@ Window {
         }
 
         function onBackgroundTaskProgressChanged(taskId, taskProgress) {
-            progressView.pCurrentProgress = taskProgress
+            progressDialog.pCurrentProgress = taskProgress
         }
 
         function onBackgroundTaskFinished(taskId) {
-            progressView.hide()
+            progressDialog.hide()
+        }
+
+        function onSetGoBackEnabled(enabled) {
+            goBackButton.enabled = enabled
+        }
+
+        function onSetGoForwardEnabled(enabled) {
+            goForwardButton.enabled = enabled
         }
 
         // DATA
 
+        id: controllerConnections
         target: controller
     }
 

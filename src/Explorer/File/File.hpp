@@ -24,8 +24,6 @@ public:
     };
     Q_ENUM(Type)
 
-    static qint8 INCORRECT_FILE_SIZE;
-
 public:
     File();
     File(const QFileInfo& fileInfo);

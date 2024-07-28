@@ -16,7 +16,8 @@ File::File()
 {}
 
 File::File(const QFileInfo& fileInfo) {
-    mType = Type::File;
+    mType = fileInfo.isFile() ? Type::File :
+            fileInfo.isDir() ? Type::Folder : Type::Unknown;
     mPath = fileInfo.filePath();
     mName = fileInfo.fileName();
 }

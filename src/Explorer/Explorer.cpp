@@ -9,6 +9,8 @@ Explorer::Explorer()
 {
     connect(&mSystemWatcher, &QFileSystemWatcher::directoryChanged,
             this, &Explorer::HandleSystemWatcherUpdate);
+    connect(&mHistory, &History::GlobalPositionNotification,
+            this, &Explorer::GlobalHistoryPositionChanged);
 }
 
 void Explorer::Cd(const QString path)
