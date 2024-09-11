@@ -13,9 +13,10 @@ qt_add_executable(appQtFileExplorer
     src/Controller.cpp
     src/Explorer/Explorer.cpp
     src/Explorer/ExplorerData.hpp
+    src/Explorer/IconProvider.cpp
     src/Explorer/History/History.cpp
-    src/Explorer/File/File.cpp
-    src/Explorer/File/FileIconProvider.cpp
+    src/Explorer/FileInfo/BaseFileInfo.cpp
+    src/Explorer/FileInfo/FullFileInfo.cpp
     src/TasksManager/TasksManager.cpp
     src/TasksManager/Task/Task.cpp
     src/TasksManager/Task/CopyFilesTask.cpp
@@ -31,6 +32,7 @@ qt_add_qml_module(appQtFileExplorer
               qml/Dialogs/ProgressDialog.qml
               qml/Dialogs/InputDialog.qml
               qml/Dialogs/PropertiesDialogs/FilePropertiesDialog.qml
+              qml/Dialogs/PropertiesDialogs/FolderPropertiesDialog.qml
               qml/Dialogs/PropertiesDialogs/DriverPropertiesDialog.qml
               qml/CButton.qml
               qml/CLabel.qml

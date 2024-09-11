@@ -124,7 +124,7 @@ ListView {
 
             Text {
                 id: fileName
-                text: type === FileType.DRIVER ? "Local Disk (" + name + ")" : name
+                text: type === ItemInfo.DRIVER ? "Local Disk (" + name + ")" : name
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 verticalAlignment: Text.AlignVCenter

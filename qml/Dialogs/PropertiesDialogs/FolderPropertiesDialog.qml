@@ -11,23 +11,21 @@ Item {
     signal showed()
     signal hidden()
 
-
     // FUNCTIONS
 
-    function show(file) {
+    function show(folder) {
         root.visible = true
 
-        image.source = "image://fileIconProvider/" + file.path
-        header.text = "Properties: " + file.name
-        type.text = file.suffix
-        location.text = file.location
-        sizeLabel.text = Utils.convertBytesToShortString(file.size) + " (" +
-                         Utils.convertBytesToString(file.size) + " bytes)"
-        createdTime.text = file.createdTime
-        modifiedTime.text = file.lastModifiedTime
-        lastOpenedTime.text = file.lastReadTime
-        onlyReadingCheckBox.checked = file.onlyReading
-        hiddenCheckBox.checked = file.hidden
+        image.source = "image://fileIconProvider/" + folder.path
+        header.text = "Properties: " + folder.name
+        location.text = folder.location
+        sizeLabel.text = Utils.convertBytesToShortString(folder.size) + " (" +
+                         Utils.convertBytesToString(folder.size) + " bytes)"
+        containsLabel.text = "Files: " + folder.subFilesCount +
+                             "; Folders: " + folder.subFoldersCount
+        createdTime.text = folder.createdTime
+        onlyReadingCheckBox.checked = folder.onlyReading
+        hiddenCheckBox.checked = folder.hidden
     }
 
     function hide() {
@@ -49,7 +47,7 @@ Item {
     Rectangle {
         id: controls
         width: 350
-        height: 390
+        height: 357
         color: "white"
         radius: 10
         anchors.centerIn: parent
@@ -89,7 +87,7 @@ Item {
                 }
 
                 Label {
-                    id: type
+                    text: "Folder"
                 }
             }
 
@@ -105,12 +103,12 @@ Item {
                 Label {
                     text: "Location:"
                     Layout.preferredWidth: 70
+                    wrapMode: TextEdit.WordWrap
                 }
 
                 Label {
                     id: location
                     Layout.fillWidth: true
-                    wrapMode: TextEdit.WordWrap
                 }
             }
 
@@ -122,6 +120,18 @@ Item {
 
                 Label {
                     id: sizeLabel
+                    Layout.fillWidth: true
+                }
+            }
+
+            RowLayout {
+                Label {
+                    text: "Contains:"
+                    Layout.preferredWidth: 70
+                }
+
+                Label {
+                    id: containsLabel
                     Layout.fillWidth: true
                 }
             }
@@ -140,31 +150,6 @@ Item {
 
                 Label {
                     id: createdTime
-                    Layout.fillWidth: true
-                }
-            }
-
-
-            RowLayout {
-                Label {
-                    text: "Modified:"
-                    Layout.preferredWidth: 70
-                }
-
-                Label {
-                    id: modifiedTime
-                    Layout.fillWidth: true
-                }
-            }
-
-            RowLayout {
-                Label {
-                    text: "Opened:"
-                    Layout.preferredWidth: 70
-                }
-
-                Label {
-                    id: lastOpenedTime
                     Layout.fillWidth: true
                 }
             }

@@ -1,4 +1,4 @@
-#include "FileIconProvider.hpp"
+#include "IconProvider.hpp"
 
 
 namespace {
@@ -6,11 +6,11 @@ namespace {
 }
 
 
-FileIconProvider::FileIconProvider()
+IconProvider::IconProvider()
     : QQuickImageProvider(QQuickImageProvider::Pixmap)
 {}
 
-QPixmap FileIconProvider::requestPixmap(const QString& file,
+QPixmap IconProvider::requestPixmap(const QString& file,
                                         QSize* size,
                                         const QSize &requestedSize)
 {

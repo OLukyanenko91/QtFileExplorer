@@ -1,113 +1,235 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import "../../"
+import "../../utils.js" as Utils
 
 
 Item {
-//    // SIGNALS
+    // SIGNALS
 
-//    signal accepted(input: string)
-//    signal showed()
-//    signal hidden()
+    signal showed()
+    signal hidden()
 
-//    // PROPERTIES
-//    property string pTip: ""
 
-//    // FUNCTIONS
+    // FUNCTIONS
 
-//    function show(inputText) {
-//        root.visible = true
+    function show(driver) {
+        root.visible = true
 
-//        if (inputText) {
-//            input.text = inputText
-//            input.pDefaultInput = inputText
-//        }
-//    }
+        image.source = "image://fileIconProvider/" + driver.path
+        fileSystem.text = driver.fileSystem
+        type.text = driver.diskType
+        header.text = "Properties: " + driver.name + " (" + driver.diskLetter + ":)"
+        diskLetter.text = "Disk " + driver.diskLetter
+        usedSpaceGB.text = Utils.convertBytesToGigabytes(driver.usedSpace) + " GB"
+        usedSpaceB.text = Utils.convertBytesToString(driver.usedSpace) + " bytes"
+        freeSpaceGB.text = Utils.convertBytesToGigabytes(driver.freeSpace) + " GB"
+        freeSpaceB.text = Utils.convertBytesToString(driver.freeSpace) + " bytes"
+        capacityGB.text = Utils.convertBytesToGigabytes(driver.capacity) + " GB"
+        capacityB.text = Utils.convertBytesToString(driver.capacity) + " bytes"
+        capacityIndication.value = (driver.usedSpace / driver.capacity * 100) / 100
+    }
 
-//    function hide() {
-//        root.visible = false
+    function hide() {
+        root.visible = false
+    }
 
-//        input.clear()
-//    }
+    // DATA
 
-//    // DATA
+    id: root
+    visible: false
 
-//    id: root
-//    visible: false
+    Rectangle {
+        id: background
+        anchors.fill: parent
+        color: "gray"
+        opacity: 0.5
+    }
 
-//    Rectangle {
-//        id: background
-//        anchors.fill: parent
-//        color: "gray"
-//        opacity: 0.5
-//    }
+    Rectangle {
+        id: controls
+        width: 275
+        height: 357
+        color: "white"
+        radius: 10
+        anchors.centerIn: parent
 
-//    Rectangle {
-//        id: controls
-//        width: 300
-//        height: 125
-//        color: "white"
-//        radius: 10
-//        anchors.centerIn: parent
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 15
 
-//        ColumnLayout {
-//            anchors.fill: parent
-//            anchors.margins: 15
+            RowLayout {
+                id: nameLayout
+                Layout.alignment: Qt.AlignCenter
 
-//            RowLayout {
-//                id: tipLayout
-//                Layout.alignment: Qt.AlignCenter
+                Image {
+                    id: image
+                    asynchronous: true
+                    mipmap: true
+                    Layout.preferredWidth: 25
+                    Layout.preferredHeight: 25
+                    fillMode: Image.PreserveAspectFit
+                }
 
-//                Label {
-//                    id: tip
-//                    text: pTip
-//                    font.bold: true
-//                }
-//            }
+                Label {
+                    id: header
+                }
+            }
 
-//            RowLayout {
-//                id: inputLayout
+            Rectangle {
+                color: "lightgrey"
+                Layout.preferredHeight: 1.5
+                Layout.fillWidth: true
+            }
 
-//                TextField {
-//                    // PROPERTIES
-//                    property string pDefaultInput: ""
+            RowLayout {
+                Label {
+                    text: "Type:"
+                    Layout.preferredWidth: 60
+                }
 
-//                    // FUNCTIONS
+                Label {
+                    id: type
+                }
+            }
 
-//                    function clear() {
-//                        text = ""
-//                    }
+            RowLayout {
+                Label {
+                    text: "File system:"
+                    Layout.preferredWidth: 60
+                }
 
-//                    // DATA
+                Label {
+                    id: fileSystem
+                }
+            }
 
-//                    id: input
-//                    Layout.fillWidth: true
-//                }
-//            }
+            Rectangle {
+                color: "lightgrey"
+                Layout.preferredHeight: 1.5
+                Layout.fillWidth: true
+            }
 
-//            RowLayout {
-//                id: buttonsLayout
-//                Layout.alignment: Qt.AlignCenter
+            RowLayout {
+                Layout.fillWidth: true
 
-//                CButton {
-//                    pText: "Ok"
-//                    pEnabled: input.text &&
-//                              input.text !== input.pDefaultInput
+                Rectangle {
+                    color: "steelblue"
+                    width: 15
+                    height: 15
+                }
 
-//                    onPressed: {
-//                        accepted(input.text)
-//                    }
-//                }
+                Label {
+                    text: "Used:"
+                    Layout.preferredWidth: 70
+                }
 
-//                CButton {
-//                    pText: "Cancel"
-//                    pEnabled: true
+                Label {
+                    id: usedSpaceB
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                }
 
-//                    onPressed: hide()
-//                }
-//            }
-//        }
-//    }
+                Label {
+                    id: usedSpaceGB
+                    Layout.preferredWidth: 50
+                    horizontalAlignment: Text.AlignRight
+                }
+            }
 
-//    onVisibleChanged: visible ? showed() : hidden()
+            RowLayout {
+                Rectangle {
+                    color: "grey"
+                    width: 15
+                    height: 15
+                }
+
+                Label {
+                    text: "Free:"
+                    Layout.preferredWidth: 70
+                }
+
+                Label {
+                    id: freeSpaceB
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                }
+
+                Label {
+                    id: freeSpaceGB
+                    Layout.preferredWidth: 50
+                    horizontalAlignment: Text.AlignRight
+                }
+            }
+
+            Rectangle {
+                color: "lightgrey"
+                Layout.preferredHeight: 1.5
+                Layout.fillWidth: true
+            }
+
+            RowLayout {
+                Label {
+                    text: "Capacity:"
+                    Layout.preferredWidth: 70
+                }
+
+                Label {
+                    id: capacityB
+                    Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignRight
+                }
+
+                Label {
+                    id: capacityGB
+                    Layout.preferredWidth: 50
+                    horizontalAlignment: Text.AlignRight
+                }
+            }
+
+            ProgressBar {
+                id: capacityIndication
+                padding: 1
+                Layout.alignment: Qt.AlignCenter
+
+                background: Rectangle {
+                    implicitWidth: 200
+                    implicitHeight: 6
+                    color: "#e6e6e6"
+                    radius: 3
+                }
+
+                contentItem: Item {
+                    implicitWidth: 200
+                    implicitHeight: 4
+
+                    Rectangle {
+                        width: capacityIndication.visualPosition * parent.width
+                        height: parent.height
+                        radius: 2
+                        color: "steelblue"
+                    }
+                }
+            }
+
+            Label {
+                id: diskLetter
+                Layout.alignment: Layout.Center
+            }
+
+            CButton {
+                pText: "Ok"
+                Layout.preferredHeight: 25
+                Layout.alignment: Layout.Center
+                pEnabled: true
+
+                onPressed: {
+                    hide()
+                }
+            }
+        }
+    }
+
+    onVisibleChanged: visible ? showed() : hidden()
 }

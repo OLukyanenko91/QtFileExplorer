@@ -4,8 +4,8 @@
 #include <QDir>
 #include <QQuickStyle>
 #include "Controller.hpp"
-#include "Explorer/File/File.hpp"
-#include "Explorer/File/FileIconProvider.hpp"
+#include "Explorer/IconProvider.hpp"
+#include "src/Explorer/FileInfo/BaseFileInfo.hpp"
 
 
 int main(int argc, char *argv[])
@@ -16,12 +16,12 @@ int main(int argc, char *argv[])
 
     Controller controller;
     engine.rootContext()->setContextProperty("controller", &controller);
-    engine.addImageProvider("fileIconProvider", new FileIconProvider);
+    engine.addImageProvider("fileIconProvider", new IconProvider);
 
-    qmlRegisterType<File>("CustomData", 0, 1, "FileType");
+    qmlRegisterType<BaseFileInfo>("CustomData", 0, 1, "ItemInfo");
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-        &app, [url](QObject *obj, const QUrl &objUrl) {
+        &app, [url](QObject* obj, const QUrl& objUrl) {
             if (!obj && url == objUrl)
                 QCoreApplication::exit(-1);
         }, Qt::QueuedConnection);

@@ -52,9 +52,14 @@ void Controller::goForward()
     mExplorer.Cd(ExplorerData::CdDirection::Forward);
 }
 
-QString Controller::getFilesSize(const QList<QString>& paths)
+qint64 Controller::getFilesSize(const QList<QString>& paths)
 {
-    return File::GetSize(paths);
+    return Explorer::GetSize(paths);
+}
+
+FullFileInfo Controller::getFileProperties(const QString path)
+{
+    return FullFileInfo::Create(path);
 }
 
 void Controller::pauseBackgroundTask(const qint64 taskId)
@@ -74,13 +79,13 @@ void Controller::cancelBackgroundTask(const qint64 taskId)
 
 void Controller::createDirectory(const QString path)
 {
-    File::CreateDirectory(path);
+    Explorer::CreateDirectory(path);
 }
 
 void Controller::renameFile(const QString filePath,
                             const QString newName)
 {
-    File::RenameFile(filePath, newName);
+    Explorer::RenameFile(filePath, newName);
 }
 
 QString Controller::rootDirectory() const

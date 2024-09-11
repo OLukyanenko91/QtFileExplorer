@@ -19,7 +19,7 @@ Window {
 
     id: root
     width: 850
-    height: 400
+    height: 450
     visible: true
     title: qsTr("File Explorer")
 
@@ -158,7 +158,20 @@ Window {
                     }
                     else {
                         let item = model.getItem(selectedIndexes[0])
-                        console.log(item.type)
+                        if (item.type === 1) { // File
+                            propertiesDialogLoader.source = "Dialogs/PropertiesDialogs/FilePropertiesDialog.qml"
+                        }
+                        else if (item.type === 2) { // Folder
+                            propertiesDialogLoader.source = "Dialogs/PropertiesDialogs/FolderPropertiesDialog.qml"
+                        }
+                        else if (item.type === 3) { // Drive
+                            propertiesDialogLoader.source = "Dialogs/PropertiesDialogs/DriverPropertiesDialog.qml"
+                        }
+
+                        if (propertiesDialogLoader.status !== Loader.Null) {
+                            let fileProperties = controller.getFileProperties(item.path)
+                            propertiesDialogLoader.item.show(fileProperties)
+                        }
                     }
                 }
             }
@@ -244,7 +257,8 @@ Window {
 
                     if (selectedFilesList.length) {
                         let size = controller.getFilesSize(selectedFilesList)
-                        statusBar.updateSelectedItemsSize(size)
+                        let sizeStr = Utils.convertBytesToShortString(size)
+                        statusBar.updateSelectedItemsSize(sizeStr)
                         statusBar.updateSelectedItemsCount(selectedFilesList.length)
                     }
                 }

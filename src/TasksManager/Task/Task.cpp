@@ -1,7 +1,8 @@
 #include <QDateTime>
 #include <QFile>
 #include "Task.hpp"
-#include "src/Explorer/File/File.hpp"
+#include "src/Explorer/Explorer.hpp"
+#include "src/Explorer/FileInfo/BaseFileInfo.hpp"
 #include "src/Common.hpp"
 
 
@@ -91,9 +92,9 @@ bool Task::CopyFile(const QString& srcFilePath,
         }
 
         // Open file output
-        auto fileName = File::GetFileName(srcFilePath);
+        auto fileName = Explorer::GetFileName(srcFilePath);
         if (QFileInfo::exists(mDestPath + '/' + fileName)) {
-            fileName = File::CreateNewFileName(mDestPath, fileName);
+            fileName = Explorer::CreateNewFileName(mDestPath, fileName);
             qWarning() << fileName;
         }
 
@@ -150,12 +151,12 @@ bool Task::DeleteFile(const QString& filePath)
 
     try {
         bool result = false;
-        auto type = File::GetTypeByPath(filePath);
+        auto type = Explorer::GetTypeByPath(filePath);
 
-        if (type == File::Type::File) {
+        if (type == BaseFileInfo::Type::File) {
             result = QFile::remove(filePath);
         }
-        else if (type == File::Type::Folder) {
+        else if (type == BaseFileInfo::Type::Folder) {
             QDir dir(filePath);
             result = dir.removeRecursively();
         }
